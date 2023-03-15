@@ -37,7 +37,7 @@ transform_test = transforms.Compose([
     normalize_scratch,])
 
 ### The data from CIFAR100 will be downloaded in the following folder
-rootdir = '../data/cifar100'
+rootdir = '../data/cifar10'
 
 # adapt the set for test
 c100train = CIFAR10(rootdir,train=True,download=True,transform=transform_train)
@@ -264,12 +264,12 @@ for epoch in range(num_epochs):
 # ------------------------------------------
 # save the model and weights
 
-torch.save(model.state_dict(), './models/densnet_base_cifar10.pth')
+torch.save(model.state_dict(), './models/densenet_base_cifar10.pth')
 
 # ------------------------------------------
 # write in the file the lists
 
-my_file = "densnet_base.txt"
+my_file = "densenet_base_cifar10.txt"
 
 with open(my_file, 'wb') as f:
     pickle.dump(train_losses, f)
@@ -294,5 +294,5 @@ plt.legend()
 
 plt.rcParams['figure.figsize'] = [10, 5] #size of plot
 plt.suptitle("Effectivness of training")
-plt.savefig("densnet_base.png")
+plt.savefig("densenet_base_cifar10.png")
 plt.show()
