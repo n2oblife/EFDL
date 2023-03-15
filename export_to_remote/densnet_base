@@ -212,11 +212,15 @@ for epoch in range(num_epochs):
         # Move tensors to the configured device
         images = images.to(device)
         labels = labels.to(device)
+
         
         # Forward pass
         outputs = model(images)
+        print(images.shape, outputs.shape, labels.shape)
+        quit()
+
         loss = criterion(outputs, labels)
-        running_loss += loss.item() # pour calculer sur une moyenne d'epoch
+        running_loss += loss.data() # pour calculer sur une moyenne d'epoch
 
         # Backward and optimize
         optimizer.zero_grad()
