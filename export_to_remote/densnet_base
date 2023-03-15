@@ -218,7 +218,7 @@ for epoch in range(num_epochs):
         outputs = model(images)
 
         loss = criterion(outputs, labels)
-        running_loss += loss.data() # pour calculer sur une moyenne d'epoch
+        running_loss += loss.item() # pour calculer sur une moyenne d'epoch
 
         # Backward and optimize
         optimizer.zero_grad()
