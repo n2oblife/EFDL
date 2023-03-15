@@ -1,0 +1,58 @@
+Notes Pnum prez 
+
+Hugging face hub
+- comme github mais que pour ML
+- gros datasets
+- bien pour demo avec librairie python (7gb cpu)
+
+
+--- Reducing complexity of CNN by quantisation and pruning ---
+ ( Stefan Duffner )
+
+
+objectif est de mettre les modeles sur de l'embarqué, pbtique energetique
+
+- CNN : compute ++ / memory --
+
+=> necessite compression des modeles (= reduc de complexité)
+
+- on retrouve reondance dans params du modele, possibilité de compression par itération (taux ordre de l'unité)
+- familles d'approches de compression : compression et optim d'archi
+ -> bcp de methodes : distillation, ellagage, hachage, ou reduc numerique des val
+ -> 
+ 
+ - distillation de savoir, un petit reseau mime le comportement d'un autre réseau à la sortie, ou parfois activation au milieu
+ - hachage , reduc du nombre de couches de facon limitée (reduc du nbre de poids), on evite la redondance des poids en gardant juste une liste de poids avec leur position plutot que pleins de poids
+ - ellagage, elimination des poids et/ou neurones les moins utiles (ou petits) (cf optimal brain damage)
+ 
+ - archi specifique, squeeze net ou mobilenet, avec decomposition des nn kernel selon dim (utilisation de bottleneck), 
+ 
+ - NAS (neural archi search), recherche auto d'archi optimale avec process d'opti selon espace de recherche def : neuroevolution (algo genetique), morphisme (bayesien), supergraphs (th des graphs)
+ 
+ - leur approche est randomisation du cnn et appriximation par des rationnels dyadic (evite multiplication et fait à la place du decalage de reg) => forme des poids est m/2^n (donne des ensemble avec precisions plus ou moins gde) , utilisation de CSD rpz
+ -> recherche d'opti des coeffs, avec norme de frobenius (mixed integer non linear pb) = linearisation du pb et approximation par annulation de certains coeff (avec compl en N)
+ 
+ - pruning : approche lors de l'apprentissage, regularisation dans fct de cout qui favorise la parsimonie, donc renforcement prunning strucutré au niv du kernel donc reduc à 0 de noyau pfs => complexité ++
+ -> après ca on concatene les noyaux (= ensemble de filtres pour ce papier), et utilisation de partimonie (= mettre le plus de choses a 0) puis concat des poids 
+ -> utilisation de norme de partimonie, qui est rapport de norme 1 et 2 des vecteurs concaténés (dans litterature, rapport norme L1/Lp et pas L1/L2) car ++
+ -> avantage est utilisation pdt apprentissage, dc app pour tous les reseaux et archi (à tester)
+ -> voir la precision et l'erreur que l'on accepte permettra plus ou moins d'avoir une gde sparsity pour 2% d'erreur on a baisse de 35% en sparsity
+ 
+ 
+ Questions :
+ - quid de la transition vers les trandformers en vision et à la ramasse pour industrie ? 
+ -> ds l'indus par tjrs à la pointe, et gd decalage entre academie et indus
+- desespoir face à course de perf et impression que rajouter de la data ca rend plus puissant mais contredit volonté d'impact energetique ? defaite ecologique de l'IA ?
+-> risque d'effet rebond, on est tjrs traine par rapport à evolution car manque de therorie sur le dev de modele efficaces dès le debut au lieu de faire des monstres que l'on reduit
+- inference coute pas cher dasn datacenter, tt pour apprentissage, que peux on faire sur cette partie au niv de compression ?
+-> methodes de NAS, meme si très gourmand c'est sytetmatique et donc plus efficace(il existe des algo auto). pas favorable non plus car aussi gourmandes, dc remises en question, seult du sens si le modele est deployé de facon massive, sinon c'est inutile
+- pb non structuré, pas de vision de l'interet ds ce cas ?
+-> pas pzé ici, mais certaines archis tirent profis, avec bcp de val a 0, 
+- existe des archi materielles qui existent du profis des val 0 ?
+-> sais pas, pas specialiste, mais possiblité de le faire
+- après le pruning analyse de choses qui se systémisent ?
+-> on peut voir les pourcentages selon les couches (dans les graph les zones du milieu sautent), mais semble specifique a archi. Il y a aussi ellagage après apprentissage, on peut plus ellaguer a la fin qu'au debut (heuristique d'observation perso), ca depend de profondeur, mais pas toucher les premieres touches
+- possibilité du coup de faire des entrainement moins couteux et ensuite faire ellagege et entrainement sur tache similaire avec ellagage sur spec ?
+-> possible, mais important est initialisation
+- pas sur de la justification de la precision pour les reseau compressés, regarder plutot la robustesse (entrée deformée etc), il y a encore plus d'erreurs avec la compression. Ici lutte contre la redondance d'abord, mais permet pas de rendre robuste ?
+-> robustesse est ++ à considerer, mais ppe que modele plus simple devrait mieux generaliser

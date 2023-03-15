@@ -55,13 +55,11 @@ class BC():
 
     def binarization(self):
 
-        ### To be completed
-
         ### (1) Save the current full precision parameters using the save_params method
-
+        self.saved_params = self.model.weight.clone()
         
-        1
         ### (2) Binarize the weights in the model, by iterating through the list of target modules and overwrite the values with their binary version
+        
         
     def restore(self):
 
