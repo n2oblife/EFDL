@@ -176,7 +176,7 @@ model = densenet_cifar().to(device)
 
 ## Hyperparameters
 num_classes = 10
-num_epochs = 200
+num_epochs = 30
 batch_size = 32
 learning_rate = 0.001
 
