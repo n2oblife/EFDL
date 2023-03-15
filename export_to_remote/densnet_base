@@ -216,8 +216,6 @@ for epoch in range(num_epochs):
         
         # Forward pass
         outputs = model(images)
-        print(images.shape, outputs.shape, labels.shape)
-        quit()
 
         loss = criterion(outputs, labels)
         running_loss += loss.data() # pour calculer sur une moyenne d'epoch
@@ -227,7 +225,8 @@ for epoch in range(num_epochs):
         loss.backward()
         optimizer.step()
 
-        correct += (outputs == labels).float().sum().item()
+        _, predicted = torch.max(outputs.data, 1)
+        correct += (predicted == labels).float().sum().item()
 
     del images, labels, outputs
     torch.cuda.empty_cache()
