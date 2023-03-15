@@ -208,7 +208,7 @@ for epoch in range(num_epochs):
     total = 0
     # pred = torch.empty(0).to(device)
     # target_values = torch.empty(0).to(device)
-    for images, labels in trainloader:  
+    for i,(images, labels) in enumerate(trainloader):  
         # Move tensors to the configured device
         images = images.to(device)
         labels = labels.to(device)
@@ -228,11 +228,15 @@ for epoch in range(num_epochs):
         _, predicted = torch.max(outputs.data, 1)
         correct += (predicted == labels).float().sum().item()
 
-    del images, labels, outputs
-    torch.cuda.empty_cache()
+        print("batch number : ",i)
+
+    # del images, labels, outputs
+    # torch.cuda.empty_cache()
 
     train_losses.append(running_loss / total_step_train)
     train_acc.append(100*correct/total_step_train)
+    print(f'Epoch [{epoch+1}/{num_epochs}], Train Loss: {train_losses[-1]:.4f}, Validation loss: {val_losses[-1]:.4f}')
+
 
     model.eval()
     with torch.no_grad():
@@ -258,10 +262,9 @@ for epoch in range(num_epochs):
         val_losses.append(running_loss / total)
         val_acc.append(100*correct/total)
 
-        del images, labels, outputs
-        torch.cuda.empty_cache()
+        # del images, labels, outputs
+        # torch.cuda.empty_cache()
 
-    print(f'Epoch [{epoch+1}/{num_epochs}], Train Loss: {train_losses[-1]:.4f}, Validation loss: {val_losses[-1]:.4f}')
     print(f'Epoch [{epoch+1}/{num_epochs}], Train accuracy: {train_acc[-1]:.4f}, Validation accuracy: {val_acc[-1]:.4f}')
 
 # ------------------------------------------
