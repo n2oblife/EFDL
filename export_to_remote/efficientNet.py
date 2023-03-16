@@ -145,7 +145,7 @@ for epoch in range(num_epochs):
     total = 0
     # pred = torch.empty(0).to(device)
     # target_values = torch.empty(0).to(device)
-    for images, labels in enumerate(trainloader) :  
+    for i, (images, labels) in enumerate(trainloader) :  
         # Move tensors to the configured device
         images, labels = images.to(device), labels.to(device)
 
