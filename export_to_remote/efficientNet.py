@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import torch.nn as nn
 import torchvision.transforms as transforms
-from torch.utils.data.dataloader import DataLoader
+from torch.utils.data import DataLoader
 import torch.nn.functional as F
 import torch.optim as optim
 import torch.nn.utils.prune as prune
@@ -187,7 +187,7 @@ for epoch in range(num_epochs):
         running_loss = 0.
         correct = 0
         total = 0
-        for images, labels in enumerate(testloader) :
+        for i, (images, labels) in enumerate(testloader) :
             # Move tensors to the configured device
             images = images.to(device)
             labels = labels.to(device)
