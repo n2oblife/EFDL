@@ -11,7 +11,7 @@ import pandas as pd
 import torch.nn.functional as F
 import torch.optim as optim
 
-import binaryconnect as bc
+import export_to_remote.Binaryconnect as bc
 
 # Device configuration
 #device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')

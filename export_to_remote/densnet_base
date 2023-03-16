@@ -56,6 +56,7 @@ num_samples_subset = 15000
 
 ## We set a seed manually so as to reproduce the results easily
 seed  = 2147483647
+torch.manual_seed(seed)
 
 ## Generate a list of shuffled indices ; with the fixed seed, the permutation will always be the same, for reproducibility
 indices = list(range(num_train_examples))
