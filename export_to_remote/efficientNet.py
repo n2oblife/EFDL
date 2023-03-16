@@ -56,7 +56,7 @@ class AddGaussianNoise(object):
 transform_train = transforms.Compose([
     transforms.RandomCrop(32, padding=4),
     transforms.RandomHorizontalFlip(),
-    transforms.RandomRotation(90),
+    #transforms.RandomRotation(90),
     AddGaussianNoise(0., 0.01),
     transforms.ToTensor(),
     normalize_scratch,
@@ -88,8 +88,8 @@ rootdir = '../data/cifar100'
 c100train = CIFAR100(rootdir,train=True,download=True,transform=transform_train)
 c100test = CIFAR100(rootdir,train=False,download=True,transform=transform_test)
 
-trainloader = DataLoader(c100train,batch_size=32,shuffle=True)
-testloader = DataLoader(c100test,batch_size=32) 
+trainloader = DataLoader(c100train,batch_size=batch_size,shuffle=True)
+testloader = DataLoader(c100test,batch_size=batch_size) 
 
 ## number of target samples for the final dataset
 num_train_examples = len(c100train)
@@ -143,8 +143,6 @@ for epoch in range(num_epochs):
     running_loss = 0.
     correct = 0
     total = 0
-    # pred = torch.empty(0).to(device)
-    # target_values = torch.empty(0).to(device)
     for i, (images, labels) in enumerate(trainloader) :  
         # Move tensors to the configured device
         images, labels = images.to(device), labels.to(device)
