@@ -69,7 +69,7 @@ transform_test = transforms.Compose([
 ##
 # Parameters in original paper for optim
 # batch = 64 / 90 epochs / Learning rate: 0.1, decreased by a factor of 10 at epochs 30 and 60 / Weight decay and momentum: 0.00004 and 0.9
-# Utiliser le dropout pour éviter un gros overfitting 
+# Utiliser le dropout pour éviter un gros overfitting et le mixup
 ##
 
 ## Hyperparameters
@@ -172,7 +172,6 @@ for epoch in range(num_epochs):
     if early_stopper.early_stop(running_loss):
         torch.save(model.state_dict(), model_dir_early)
         print("Training stop early at epoch ",epoch,"/",num_epochs," with a loss of : ",running_loss)
-        break
 
     # del images, labels, outputs
     # torch.cuda.empty_cache()
