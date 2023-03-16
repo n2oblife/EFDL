@@ -44,12 +44,16 @@ class AddGaussianNoise(object):
     def __init__(self, mean=0., std=1.):
         self.std = std
         self.mean = mean
-        
-    def __call__(self, tensor):
-        return tensor + torch.randn_like(tensor) * self.std + self.mean
-    
+        self.to_tensor = transforms.ToTensor()
+
+    def __call__(self, image):
+        tensor = self.to_tensor(image)
+        tensor += torch.randn_like(tensor) * self.std + self.mean
+        return transforms.ToPILImage()(tensor)
+
     def __repr__(self):
         return self.__class__.__name__ + '(mean={0}, std={1})'.format(self.mean, self.std)
+
 
 # Transforms is a list of transformations applied on the 'raw' dataset before the data is fed to the network. 
 # Here, Data augmentation (RandomCrop and Horizontal Flip) are applied to each batch, differently at each epoch, on the training set data only
