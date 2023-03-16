@@ -139,7 +139,7 @@ val_acc = []
 # Train the model
 total_step_train = len(trainloader)
 total_step_val = len(testloader)
-number_batch = int(total_step_train/batch_size)
+number_batch = len(trainloader)
 
 for epoch in range(num_epochs):
 
@@ -181,7 +181,7 @@ for epoch in range(num_epochs):
 
     train_losses.append(running_loss / total_step_train)
     train_acc.append(100*correct/total_step_train)
-    print(f'Epoch [{epoch+1}/{num_epochs}], Train Loss: {train_losses[-1]:.4f}, Validation loss: {val_losses[-1]:.4f}')
+    print(f'Epoch [{epoch+1}/{num_epochs}], Train Loss : {train_losses[-1]:.4f}, Train accuracy : {train_acc[-1]:.4f}')
 
 
     model.eval()
