@@ -46,7 +46,7 @@ class AddGaussianNoise(object):
         self.mean = mean
         
     def __call__(self, tensor):
-        return tensor + torch.randn(tensor.size()) * self.std + self.mean
+        return tensor + torch.randn_like(tensor) * self.std + self.mean
     
     def __repr__(self):
         return self.__class__.__name__ + '(mean={0}, std={1})'.format(self.mean, self.std)
@@ -56,7 +56,7 @@ class AddGaussianNoise(object):
 transform_train = transforms.Compose([
     transforms.RandomCrop(32, padding=4),
     transforms.RandomHorizontalFlip(),
-    #transforms.RandomRotation(90),
+    transforms.RandomRotation(90),
     AddGaussianNoise(0., 0.01),
     transforms.ToTensor(),
     normalize_scratch,
