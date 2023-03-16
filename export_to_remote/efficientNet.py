@@ -137,6 +137,8 @@ total_step_train = len(trainloader)
 total_step_val = len(testloader)
 number_batch = int(total_step_train/batch_size)
 
+print(trainloader[0])
+
 for epoch in range(num_epochs):
 
     model.train()
@@ -187,8 +189,6 @@ for epoch in range(num_epochs):
         running_loss = 0.
         correct = 0
         total = 0
-        # pred = torch.empty(0).to(device)
-        # target_values = torch.empty(0).to(device)
         for images, labels in testloader:
             # Move tensors to the configured device
             images = images.to(device)
@@ -204,10 +204,6 @@ for epoch in range(num_epochs):
             # For accuracy
             _, predicted = torch.max(outputs.data, 1)
             correct += (predicted == labels).float().sum().item()
-
-            
-            #pred = torch.cat((pred,predicted),0)
-            #target_values = torch.cat((target_values,labels),0)
 
         val_losses.append(running_loss / total)
         val_acc.append(100*correct/total)
