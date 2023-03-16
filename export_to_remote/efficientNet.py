@@ -123,7 +123,7 @@ early_stopper = EarlyStopper(patience, delta_loss)
 # To plot the accruacy
 epoch_list = list(range(num_epochs))
 
-running_loss = 0
+running_loss = 0.
 train_losses = []
 val_losses = []
 
@@ -140,14 +140,13 @@ number_batch = int(total_step_train/batch_size)
 for epoch in range(num_epochs):
 
     model.train()
-    running_loss = 0
+    running_loss = 0.
     correct = 0
     total = 0
     # pred = torch.empty(0).to(device)
     # target_values = torch.empty(0).to(device)
-    for i,data in enumerate(trainloader,0):  
+    for i, (images, labels) in enumerate(trainloader):  
         # Move tensors to the configured device
-        images, labels = data[0], data[1]
         images, labels = images.to(device), labels.to(device)
 
         # Forward pass
@@ -169,6 +168,8 @@ for epoch in range(num_epochs):
 
         print("\r"+"Batch training : ",i,"/",number_batch ,end="")
 
+        torch.cuda.empty_cache()
+
     if early_stopper.early_stop(running_loss):
         torch.save(model.state_dict(), model_dir_early)
         print("Training stop early at epoch ",epoch,"/",num_epochs," with a loss of : ",running_loss)
@@ -183,7 +184,7 @@ for epoch in range(num_epochs):
 
     model.eval()
     with torch.no_grad():
-        running_loss = 0
+        running_loss = 0.
         correct = 0
         total = 0
         # pred = torch.empty(0).to(device)
