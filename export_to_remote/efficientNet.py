@@ -137,8 +137,6 @@ total_step_train = len(trainloader)
 total_step_val = len(testloader)
 number_batch = int(total_step_train/batch_size)
 
-print(trainloader[0])
-
 for epoch in range(num_epochs):
 
     model.train()
@@ -147,7 +145,7 @@ for epoch in range(num_epochs):
     total = 0
     # pred = torch.empty(0).to(device)
     # target_values = torch.empty(0).to(device)
-    for i, (images, labels) in enumerate(trainloader):  
+    for images, labels in trainloader :  
         # Move tensors to the configured device
         images, labels = images.to(device), labels.to(device)
 
