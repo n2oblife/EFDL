@@ -145,10 +145,10 @@ for epoch in range(num_epochs):
     total = 0
     # pred = torch.empty(0).to(device)
     # target_values = torch.empty(0).to(device)
-    for i,(images, labels) in enumerate(trainloader,0):  
+    for i,data in enumerate(trainloader,0):  
         # Move tensors to the configured device
-        images = images.to(device)
-        labels = labels.to(device)
+        images, labels = data[0], data[1]
+        images, labels = images.to(device), labels.to(device)
 
         # Forward pass
         outputs = model(images)
