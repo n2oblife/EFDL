@@ -101,8 +101,8 @@ num_samples_subset = 15000
 
 # Model definition
 model = EfficientNet.from_name('efficientnet-b1', num_classes=num_classes).to(device)
-model_dir = './models/efficientnet-b1_base_cifar100.pth'
-model_dir_early = './models/efficientnet-b1_base_cifar100_early.pth'
+model_dir = './models/efficientnet-b1_base_cifar100.pt'
+model_dir_early = './models/efficientnet-b1_base_cifar100_early.pt'
 
 # Loss and optimizer
 criterion = nn.CrossEntropyLoss()
@@ -181,7 +181,7 @@ for epoch in range(num_epochs):
 
     train_losses.append(running_loss / total)
     train_acc.append(100*correct/total)
-    print(f'\n'+'Train Loss : {train_losses[-1]:.4f}, Train accuracy : {train_acc[-1]:.4f}')
+    print('\n'+f'Train Loss : {train_losses[-1]:.4f}, Train accuracy : {train_acc[-1]:.4f}')
 
 
     with torch.no_grad():
