@@ -167,20 +167,17 @@ for epoch in range(num_epochs):
         # For accuracy
         _, predicted = torch.max(outputs.data, 1)
         correct += (predicted == labels).float().sum().item()
+        total += labels.size(0)
 
         print("\r"+"Batch training : ",i,"/",number_batch ,end="")
 
         torch.cuda.empty_cache()
 
-    if early_stopper.early_stop(running_loss):
-        torch.save(model.state_dict(), model_dir_early)
-        print("Training stop early at epoch ",epoch,"/",num_epochs," with a loss of : ",running_loss)
-
     # del images, labels, outputs
     # torch.cuda.empty_cache()
 
-    train_losses.append(running_loss / total_step_train)
-    train_acc.append(100*correct/total_step_train)
+    train_losses.append(running_loss / total)
+    train_acc.append(100*correct/total)
     print(f'Epoch [{epoch+1}/{num_epochs}], Train Loss : {train_losses[-1]:.4f}, Train accuracy : {train_acc[-1]:.4f}')
 
 
@@ -204,12 +201,19 @@ for epoch in range(num_epochs):
             # For accuracy
             _, predicted = torch.max(outputs.data, 1)
             correct += (predicted == labels).float().sum().item()
+            total += labels.size(0)
 
         val_losses.append(running_loss / total)
         val_acc.append(100*correct/total)
 
         # del images, labels, outputs
         # torch.cuda.empty_cache()
+
+    # Early stopping in case of overfitting
+    if early_stopper.early_stop(running_loss):
+        torch.save(model.state_dict(), model_dir_early)
+        print("\n"+"Training stop early at epoch ",epoch,"/",num_epochs," with a loss of : ",running_loss)
+
 
     print(f'Epoch [{epoch+1}/{num_epochs}], Train accuracy: {train_acc[-1]:.4f}, Validation accuracy: {val_acc[-1]:.4f}')
 
@@ -219,7 +223,7 @@ for epoch in range(num_epochs):
 torch.save(model.state_dict(), model_dir)
 
 # ------------------------------------------
-# write in the file the lists
+# save the metrics
 
 my_file = "./models/efficientnet-b1_base_cifar100.txt"
 file_dir = "./models/efficientnet-b1_base_cifar100.png"
