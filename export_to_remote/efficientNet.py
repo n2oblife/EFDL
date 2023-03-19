@@ -83,7 +83,7 @@ batch_size = 64
 learning_rate = 0.01
 weight_decay = 0.00004
 momentum = 0.9
-end_sched = int(num_epochs/2)
+end_sched = int(2*num_epochs/3)
 
 ### The data from CIFAR100 will be downloaded in the following folder
 rootdir = '../data/cifar100'
@@ -120,8 +120,8 @@ scheduler = CosineAnnealingLR(optimizer,
 #                      mode = "exp_range")
 
 # Early stopping
-patience = 2
-delta_loss = 1
+patience = 3
+delta_loss = 0.0001
 early_stopper = EarlyStopper(patience, delta_loss)
 
 # To plot the accruacy
@@ -145,10 +145,11 @@ for epoch in range(num_epochs):
 
     print(f'Epoch [{epoch+1}/{num_epochs}]')
           
-    model.train()
     running_loss = 0.
     correct = 0
     total = 0
+
+    model.train()
     for i, (images, labels) in enumerate(trainloader) :  
         # Move tensors to the configured device
         images, labels = images.to(device), labels.to(device)
@@ -180,14 +181,16 @@ for epoch in range(num_epochs):
 
     train_losses.append(running_loss / total)
     train_acc.append(100*correct/total)
-    print(f'\n Train Loss : {train_losses[-1]:.4f}, Train accuracy : {train_acc[-1]:.4f}')
+    print(f'\n'+'Train Loss : {train_losses[-1]:.4f}, Train accuracy : {train_acc[-1]:.4f}')
 
 
-    model.eval()
     with torch.no_grad():
+
         running_loss = 0.
         correct = 0
         total = 0
+
+        model.eval()
         for i, (images, labels) in enumerate(testloader) :
             # Move tensors to the configured device
             images = images.to(device)
