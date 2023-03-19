@@ -143,6 +143,8 @@ number_batch = len(trainloader)
 
 for epoch in range(num_epochs):
 
+    print(f'Epoch [{epoch+1}/{num_epochs}]')
+          
     model.train()
     running_loss = 0.
     correct = 0
@@ -178,7 +180,7 @@ for epoch in range(num_epochs):
 
     train_losses.append(running_loss / total)
     train_acc.append(100*correct/total)
-    print(f'Epoch [{epoch+1}/{num_epochs}], Train Loss : {train_losses[-1]:.4f}, Train accuracy : {train_acc[-1]:.4f}')
+    print(f'\n Train Loss : {train_losses[-1]:.4f}, Train accuracy : {train_acc[-1]:.4f}')
 
 
     model.eval()
@@ -209,13 +211,14 @@ for epoch in range(num_epochs):
         # del images, labels, outputs
         # torch.cuda.empty_cache()
 
+    print(f'Validation loss: {val_losses[-1]:.4f}, Validation accuracy: {val_acc[-1]:.4f}')
+    print('---------------------------------------')
+
     # Early stopping in case of overfitting
     if early_stopper.early_stop(running_loss):
         torch.save(model.state_dict(), model_dir_early)
-        print("\n"+"Training stop early at epoch ",epoch,"/",num_epochs," with a loss of : ",running_loss)
+        print("\n"+"Training stop early at epoch ",epoch,"/",num_epochs," with a loss of : ",running_loss/total,", and accuracy of : ",100*correct/total)
 
-
-    print(f'Epoch [{epoch+1}/{num_epochs}], Train accuracy: {train_acc[-1]:.4f}, Validation accuracy: {val_acc[-1]:.4f}')
 
 # ------------------------------------------
 # save the model and weights
