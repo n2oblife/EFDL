@@ -123,6 +123,7 @@ scheduler = CosineAnnealingLR(optimizer,
 patience = 3
 delta_loss = 0.0001
 early_stopper = EarlyStopper(patience, delta_loss)
+stopping_list = []
 
 # To plot the accruacy
 epoch_list = list(range(num_epochs))
@@ -219,10 +220,11 @@ for epoch in range(num_epochs):
 
     # Early stopping in case of overfitting
     if early_stopper.early_stop(running_loss):
-        torch.save(model.state_dict(), model_dir_early)
+        #torch.save(model.state_dict(), model_dir_early)
         print("\n"+"Training stop early at epoch ",epoch,"/",num_epochs," with a loss of : ",running_loss/total,", and accuracy of : ",100*correct/total)
+        stopping_list.append(epoch)
 
-
+print("\n"+"Les epoch d'early stop sont : ",stopping_list)
 # ------------------------------------------
 # save the model and weights
 
