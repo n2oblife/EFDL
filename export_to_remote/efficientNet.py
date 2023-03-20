@@ -177,11 +177,11 @@ class VGG16(nn.Module):
 ## Hyperparameters
 num_classes = 100
 num_epochs = 5
-batch_size = 64
+batch_size = 32
 learning_rate = 0.001
 weight_decay = 0.00004
 momentum = 0.9
-end_sched = int(2*num_epochs/3)
+#end_sched = int(2*num_epochs/3)
 
 # Base directory from EFDL to EFDL_storage
 base_dir = '../EFDL_storage'
@@ -216,7 +216,7 @@ optimizer = optim.SGD(model.parameters(),
                             weight_decay = weight_decay,
                             momentum = momentum)  
 scheduler = CosineAnnealingLR(optimizer,
-                              T_max = end_sched, # Maximum number of iterations.
+                              T_max = num_epochs, # Maximum number of iterations.
                               eta_min = learning_rate/100) # Minimum learning rate.
 # scheduler = CyclicLR(optimizer, 
 #                      base_lr = learning_rate/10, # Initial learning rate which is the lower boundary in the cycle for each parameter group
