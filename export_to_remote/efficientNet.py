@@ -176,7 +176,7 @@ class VGG16(nn.Module):
 
 ## Hyperparameters
 num_classes = 100
-num_epochs = 30
+num_epochs = 2
 batch_size = 32
 learning_rate = 0.001
 weight_decay = 0.00004
@@ -199,10 +199,12 @@ num_samples_subset = 15000
 
 # Model definition
 model_name = 'vgg16'
+training = 'base'
+dataset = 'cifar100'
 #model = EfficientNet.from_name('efficientnet-b1', num_classes=num_classes).to(device)
-model = model = VGG16(num_classes).to(device)
-model_dir = './models/'+model_name+'_base_cifar100.pt'
-model_dir_early = './'+model_name+'_base_cifar100_early.pt'
+model = VGG16(num_classes).to(device)
+model_dir = './models/'+ model_name +'_'+ training +'_'+ dataset +'.pt'
+model_dir_early = './models/'+ model_name +'_'+ training +'_'+ dataset +'_early.pt'
 
 # Loss and optimizer
 criterion = nn.CrossEntropyLoss()
@@ -327,14 +329,19 @@ for epoch in range(num_epochs):
 print("\n"+"Les epoch d'early stop sont : ",stopping_list)
 # ------------------------------------------
 # save the model and weights
-
-torch.save(model.state_dict(), model_dir)
+save = {'model name': model_name,
+        'model': model.state_dict(),
+        'optimizer': optimizer.state_dict(),
+        'epoch': num_epochs,
+        'training': training,
+        'dataset': dataset}
+torch.save(save, model_dir)
 
 # ------------------------------------------
 # save the metrics
 
-my_file = './models/'+model_name+'_base_cifar100.txt'
-file_dir = './models/'+model_name+'_base_cifar100.png'
+my_file = './metrics/'+model_name+'_'+training+'_'+dataset+'.txt'
+file_dir = './metrics/'+model_name+'_'+training+'_'+dataset+'.png'
 
 with open(my_file, 'wb') as f:
     pickle.dump(train_losses, f)
