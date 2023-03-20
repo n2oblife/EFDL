@@ -58,7 +58,6 @@ class AddGaussianNoise(object):
 # Transforms is a list of transformations applied on the 'raw' dataset before the data is fed to the network. 
 # Here, Data augmentation (RandomCrop and Horizontal Flip) are applied to each batch, differently at each epoch, on the training set data only
 transform_train = transforms.Compose([
-    transforms.Resize((224,224)),
     transforms.RandomCrop(32, padding=4),
     transforms.RandomHorizontalFlip(),
     transforms.RandomRotation(45),
@@ -68,8 +67,6 @@ transform_train = transforms.Compose([
 ])
 
 transform_test = transforms.Compose([
-    transforms.Resize((32,32)),
-    transforms.RandomCrop(32, padding=4),
     transforms.ToTensor(),
     normalize_scratch,])
 
@@ -179,7 +176,7 @@ class VGG16(nn.Module):
 
 ## Hyperparameters
 num_classes = 100
-num_epochs = 10
+num_epochs = 3
 batch_size = 32
 learning_rate = 0.001
 weight_decay = 0.00004
@@ -206,7 +203,7 @@ training = 'base'
 dataset = 'cifar100'
 #model = EfficientNet.from_name('efficientnet-b1', num_classes=num_classes).to(device)
 model = VGG16(num_classes).to(device)
-model_dir = './models/'+ model_name +'_'+ training +'_'+ dataset +'.pt'
+model_dir = model_name +'_'+ training +'_'+ dataset +'.pt'
 model_dir_early = './models/'+ model_name +'_'+ training +'_'+ dataset +'_early.pt'
 
 # Loss and optimizer
