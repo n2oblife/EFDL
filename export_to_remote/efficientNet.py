@@ -61,7 +61,7 @@ transform_train = transforms.Compose([
     transforms.RandomCrop(32, padding=4),
     transforms.RandomHorizontalFlip(),
     transforms.RandomRotation(45),
-    #AddGaussianNoise(0., 0.0001),
+    AddGaussianNoise(0., 0.0001),
     transforms.ToTensor(),
     normalize_scratch,
 ])
@@ -176,7 +176,7 @@ class VGG16(nn.Module):
 
 ## Hyperparameters
 num_classes = 100
-num_epochs = 3
+num_epochs = 5
 batch_size = 32
 learning_rate = 0.001
 weight_decay = 0.00004
@@ -217,7 +217,7 @@ optimizer = optim.SGD(model.parameters(),
                             momentum = momentum)  
 scheduler = CosineAnnealingLR(optimizer,
                               T_max = end_sched, # Maximum number of iterations.
-                              eta_min = learning_rate/1000) # Minimum learning rate.
+                              eta_min = learning_rate/100) # Minimum learning rate.
 # scheduler = CyclicLR(optimizer, 
 #                      base_lr = learning_rate/10, # Initial learning rate which is the lower boundary in the cycle for each parameter group
 #                      max_lr = learning_rate, # Upper learning rate boundaries in the cycle for each parameter group
@@ -334,49 +334,49 @@ if len(stopping_list) == 0:
 else :
     print("\n"+"Les epoch d'early stop sont : ",stopping_list)
 
-# ------------------------------------------
-# save the model and weights
-model_state = {'model name': model_name,
-        'model': model,
-        'optimizer': optimizer,
-        'epoch': num_epochs,
-        'training': training,
-        'dataset': dataset,
-        'accuracy': 100*correct/total,
-        'loss': running_loss/total}
-torch.save(model_state, model_dir)
-print("Modèle sauvegardé en tant que ",model_dir)
+# # ------------------------------------------
+# # save the model and weights
+# model_state = {'model name': model_name,
+#         'model': model,
+#         'optimizer': optimizer,
+#         'epoch': num_epochs,
+#         'training': training,
+#         'dataset': dataset,
+#         'accuracy': 100*correct/total,
+#         'loss': running_loss/total}
+# torch.save(model_state, model_dir)
+# print("Modèle sauvegardé dans le chemin : ",model_dir)
 
-# ------------------------------------------
-# save the metrics
+# # ------------------------------------------
+# # save the metrics
 
-my_file = base_dir+'/metrics/'+model_name+'_'+training+'_'+dataset+'.txt'
-file_dir = base_dir+'/metrics/'+model_name+'_'+training+'_'+dataset+'.png'
+# my_file = base_dir+'/metrics/'+model_name+'_'+training+'_'+dataset+'.txt'
+# file_dir = base_dir+'/metrics/'+model_name+'_'+training+'_'+dataset+'.png'
 
-with open(my_file, 'wb') as f:
-    pickle.dump(train_losses, f)
-    pickle.dump(val_losses, f)
-    pickle.dump(train_acc, f)
-    pickle.dump(val_acc, f)
+# with open(my_file, 'wb') as f:
+#     pickle.dump(train_losses, f)
+#     pickle.dump(val_losses, f)
+#     pickle.dump(train_acc, f)
+#     pickle.dump(val_acc, f)
 
-plt.subplot(121)
-plt.plot(epoch_list, train_losses, label = "Training loss")
-plt.plot(epoch_list, val_losses, label = "Validation loss")
-plt.xlabel("Epochs")
-plt.ylabel("%")
-plt.title("Losses")
+# plt.subplot(121)
+# plt.plot(epoch_list, train_losses, label = "Training loss")
+# plt.plot(epoch_list, val_losses, label = "Validation loss")
+# plt.xlabel("Epochs")
+# plt.ylabel("%")
+# plt.title("Losses")
 
-plt.subplot(122)
-plt.plot(epoch_list, train_acc, label = "Training accuracy")
-plt.plot(epoch_list, val_acc, label = "Validation accuracy")
-plt.xlabel("Epochs")
-plt.ylabel("%")
-plt.title("Accuracy")
-plt.legend()
+# plt.subplot(122)
+# plt.plot(epoch_list, train_acc, label = "Training accuracy")
+# plt.plot(epoch_list, val_acc, label = "Validation accuracy")
+# plt.xlabel("Epochs")
+# plt.ylabel("%")
+# plt.title("Accuracy")
+# plt.legend()
 
-plt.rcParams['figure.figsize'] = [10, 5] #size of plot
-plt.suptitle("Effectivness of training")
-plt.savefig(file_dir)
-plt.show()
+# plt.rcParams['figure.figsize'] = [10, 5] #size of plot
+# plt.suptitle("Effectivness of training")
+# plt.savefig(file_dir)
+# plt.show()
 
-print("Metriques sauvegardées en tant que ",file_dir)
+# print("Metriques sauvegardées dans le chemin : ",file_dir)
