@@ -177,8 +177,8 @@ class VGG16(nn.Module):
 ## Hyperparameters
 num_classes = 100
 num_epochs = 5
-batch_size = 32
-learning_rate = 0.01
+batch_size = 64
+learning_rate = 0.001
 weight_decay = 0.00004
 momentum = 0.9
 end_sched = int(2*num_epochs/3)
