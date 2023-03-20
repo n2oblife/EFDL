@@ -183,8 +183,11 @@ weight_decay = 0.00004
 momentum = 0.9
 end_sched = int(2*num_epochs/3)
 
+# Base directory from EFDL to EFDL_storage
+base_dir = '../EFDL_storage'
+
 ### The data from CIFAR100 will be downloaded in the following folder
-rootdir = '../data/cifar100'
+rootdir = base_dir+'/data/cifar100'
 
 # adapt the set for test
 c100train = CIFAR100(rootdir,train=True,download=True,transform=transform_train)
@@ -203,8 +206,8 @@ training = 'base'
 dataset = 'cifar100'
 #model = EfficientNet.from_name('efficientnet-b1', num_classes=num_classes).to(device)
 model = VGG16(num_classes).to(device)
-model_dir = model_name +'_'+ training +'_'+ dataset +'.pt'
-model_dir_early = './models/'+ model_name +'_'+ training +'_'+ dataset +'_early.pt'
+model_dir = base_dir+'/models/'+model_name +'_'+ training +'_'+ dataset +'.pt'
+model_dir_early = base_dir+'/models/'+ model_name +'_'+ training +'_'+ dataset +'_early.pt'
 
 # Loss and optimizer
 criterion = nn.CrossEntropyLoss()
@@ -347,8 +350,8 @@ print("Modèle sauvegardé en tant que ",model_dir)
 # ------------------------------------------
 # save the metrics
 
-my_file = model_name+'_'+training+'_'+dataset+'.txt'
-file_dir = model_name+'_'+training+'_'+dataset+'.png'
+my_file = base_dir+'/metrics/'+model_name+'_'+training+'_'+dataset+'.txt'
+file_dir = base_dir+'/metrics/'+model_name+'_'+training+'_'+dataset+'.png'
 
 with open(my_file, 'wb') as f:
     pickle.dump(train_losses, f)
