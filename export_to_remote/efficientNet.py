@@ -61,7 +61,7 @@ transform_train = transforms.Compose([
     transforms.RandomCrop(32, padding=4),
     transforms.RandomHorizontalFlip(),
     transforms.RandomRotation(45),
-    AddGaussianNoise(0., 0.001),
+    #AddGaussianNoise(0., 0.01),
     transforms.ToTensor(),
     normalize_scratch,
 ])
@@ -176,7 +176,7 @@ class VGG16(nn.Module):
 
 ## Hyperparameters
 num_classes = 100
-num_epochs = 2
+num_epochs = 10
 batch_size = 32
 learning_rate = 0.001
 weight_decay = 0.00004
@@ -326,7 +326,11 @@ for epoch in range(num_epochs):
         print("\n"+"Training stop early at epoch ",epoch,"/",num_epochs," with a loss of : ",running_loss/total,", and accuracy of : ",100*correct/total)
         stopping_list.append(epoch)
 
-print("\n"+"Les epoch d'early stop sont : ",stopping_list)
+if len(stopping_list) == 0:
+    print("Pas d'overfiting !")
+else :
+    print("\n"+"Les epoch d'early stop sont : ",stopping_list)
+
 # ------------------------------------------
 # save the model and weights
 save = {'model name': model_name,
