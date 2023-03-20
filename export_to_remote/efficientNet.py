@@ -60,8 +60,8 @@ class AddGaussianNoise(object):
 transform_train = transforms.Compose([
     transforms.RandomCrop(32, padding=4),
     transforms.RandomHorizontalFlip(),
-    transforms.RandomRotation(90),
-    AddGaussianNoise(0., 0.01),
+    transforms.RandomRotation(45),
+    AddGaussianNoise(0., 0.001),
     transforms.ToTensor(),
     normalize_scratch,
 ])
