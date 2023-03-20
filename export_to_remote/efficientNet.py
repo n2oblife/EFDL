@@ -278,7 +278,7 @@ for epoch in range(num_epochs):
         correct += (predicted == labels).float().sum().item()
         total += labels.size(0)
 
-        print("\r"+"Batch training : ",i,"/",number_batch ,end="")
+        print("\r"+"Batch training : ",i+1,"/",number_batch ,end="")
 
         torch.cuda.empty_cache()
 
@@ -287,7 +287,7 @@ for epoch in range(num_epochs):
 
     train_losses.append(running_loss / total)
     train_acc.append(100*correct/total)
-    print('\n'+f'Train Loss : {train_losses[-1]:.4f} , Train accuracy : {train_acc[-1]:.4f}')
+    print('\r'+f'Train Loss : {train_losses[-1]:.4f} , Train accuracy : {train_acc[-1]:.4f}')
 
 
     with torch.no_grad():
