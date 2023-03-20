@@ -68,7 +68,6 @@ transform_train = transforms.Compose([
 ])
 
 transform_test = transforms.Compose([
-    transforms.Resize((224,224)),
     transforms.ToTensor(),
     normalize_scratch,])
 
