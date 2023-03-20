@@ -58,15 +58,17 @@ class AddGaussianNoise(object):
 # Transforms is a list of transformations applied on the 'raw' dataset before the data is fed to the network. 
 # Here, Data augmentation (RandomCrop and Horizontal Flip) are applied to each batch, differently at each epoch, on the training set data only
 transform_train = transforms.Compose([
+    transforms.Resize((224,224)),
     transforms.RandomCrop(32, padding=4),
     transforms.RandomHorizontalFlip(),
     transforms.RandomRotation(45),
-    #AddGaussianNoise(0., 0.01),
+    #AddGaussianNoise(0., 0.0001),
     transforms.ToTensor(),
     normalize_scratch,
 ])
 
 transform_test = transforms.Compose([
+    transforms.Resize((224,224)),
     transforms.ToTensor(),
     normalize_scratch,])
 
@@ -333,13 +335,15 @@ else :
 
 # ------------------------------------------
 # save the model and weights
-save = {'model name': model_name,
-        'model': model.state_dict(),
-        'optimizer': optimizer.state_dict(),
+model_state = {'model name': model_name,
+        'model': model,
+        'optimizer': optimizer,
         'epoch': num_epochs,
         'training': training,
-        'dataset': dataset}
-torch.save(save, model_dir)
+        'dataset': dataset,
+        'accuracy': 100*correct/total,
+        'loss': running_loss/total}
+torch.save(model_state, model_dir)
 
 # ------------------------------------------
 # save the metrics
