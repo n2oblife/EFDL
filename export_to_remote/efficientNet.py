@@ -342,12 +342,13 @@ model_state = {'model name': model_name,
         'accuracy': 100*correct/total,
         'loss': running_loss/total}
 torch.save(model_state, model_dir)
+print("Modèle sauvegardé en tant que ",model_dir)
 
 # ------------------------------------------
 # save the metrics
 
-my_file = './metrics/'+model_name+'_'+training+'_'+dataset+'.txt'
-file_dir = './metrics/'+model_name+'_'+training+'_'+dataset+'.png'
+my_file = model_name+'_'+training+'_'+dataset+'.txt'
+file_dir = model_name+'_'+training+'_'+dataset+'.png'
 
 with open(my_file, 'wb') as f:
     pickle.dump(train_losses, f)
@@ -374,3 +375,5 @@ plt.rcParams['figure.figsize'] = [10, 5] #size of plot
 plt.suptitle("Effectivness of training")
 plt.savefig(file_dir)
 plt.show()
+
+print("Metriques sauvegardées en tant que ",file_dir)
