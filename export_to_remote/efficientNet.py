@@ -202,11 +202,11 @@ num_train_examples = len(c100train)
 num_samples_subset = 15000
 
 # Model definition
-model_name = 'densnet121'
+model_name = 'efficientnet-b1'
 training = 'base'
 dataset = 'cifar100'
-model = densenet_cifar(num_classes).to(device)
-#model = EfficientNet.from_name('efficientnet-b1', num_classes=num_classes).to(device)
+#model = densenet_cifar(num_classes).to(device) #densnet121
+model = EfficientNet.from_name('efficientnet-b1', num_classes=num_classes).to(device)
 model_dir = base_dir+'/models/'+model_name +'_'+ training +'_'+ dataset +'.pt'
 model_dir_early = base_dir+'/models/'+ model_name +'_'+ training +'_'+ dataset +'_early.pt'
 
