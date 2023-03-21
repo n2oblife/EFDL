@@ -268,8 +268,8 @@ for epoch in range(num_epochs):
         loss = criterion(outputs, labels)
         running_loss += loss.item() # pour calculer sur une moyenne d'epoch
         
-        l2_penalty = weight_decay * sum([(p**2).sum() for p in model.parameters()])
-        loss_with_penalty = loss + l2_penalty
+        l2_regu = weight_decay * sum([(p**2).sum() for p in model.parameters()])
+        loss_with_penalty = loss + l2_regu
 
         # Backward and optimize
         optimizer.zero_grad()
@@ -288,7 +288,7 @@ for epoch in range(num_epochs):
     
     # Scheduler
     scheduler.step() # updates the lr value
-    if i > end_sched:
+    if epoch > end_sched:
         weight_decay *= 1.02 # update the regularization value
 
     # del images, labels, outputs
