@@ -323,7 +323,7 @@ except KeyboardInterrupt:
     print("validation loss : ",list(val_losses))
     print("training accuracy : ",list(train_acc))
     print("validation accuracy : ",list(val_acc))
-    print("stopping list : ",list(stopping_list)
+    print("stopping list : ",list(stopping_list))
 
 finally:
     print("end of training script of ",model_name)
