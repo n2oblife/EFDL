@@ -178,7 +178,7 @@ class VGG16(nn.Module):
 ## Hyperparameters
 num_classes = 100
 num_epochs = 5
-batch_size = 32
+batch_size = 64
 learning_rate = 0.001
 weight_decay = 0.00004
 momentum = 0.9
@@ -202,7 +202,7 @@ num_train_examples = len(c100train)
 num_samples_subset = 15000
 
 # Model definition
-model_name = 'efficientnet-b1'
+model_name = 'densnet121'
 training = 'base'
 dataset = 'cifar100'
 model = densenet_cifar(num_classes).to(device)
@@ -227,7 +227,7 @@ scheduler = CosineAnnealingLR(optimizer,
 
 # Early stopping
 patience = 3
-delta_loss = 0.0001
+delta_loss = 0.001
 early_stopper = EarlyStopper(patience, delta_loss)
 stopping_list = []
 
