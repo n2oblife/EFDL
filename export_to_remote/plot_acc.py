@@ -15,11 +15,11 @@ val_acc =  np.array([10.75, 15.79, 18.08, 21.52, 24.41, 29.18, 30.21, 34.17, 35.
 # val_acc =  np.array([])
 
 
-print (len(epoch_list))
-print(len(train_losses))
-print(len(val_losses))
-print(len(train_acc))
-print(len(val_acc))
+print ("epoch list : ",epoch_list)
+print("training loss : ",train_losses)
+print("validation loss : ",val_losses)
+print("training accuracy : ",train_acc)
+print("validation accuracy : ",val_acc)
 
 plt.subplot(121)
 plt.plot(epoch_list, train_losses, label = "Training loss")
