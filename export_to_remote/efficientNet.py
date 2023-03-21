@@ -205,7 +205,7 @@ num_samples_subset = 15000
 model_name = 'efficientnet-b1'
 training = 'base'
 dataset = 'cifar100'
-model = densenet_cifar().to(device)
+model = densenet_cifar(num_classes).to(device)
 #model = EfficientNet.from_name('efficientnet-b1', num_classes=num_classes).to(device)
 model_dir = base_dir+'/models/'+model_name +'_'+ training +'_'+ dataset +'.pt'
 model_dir_early = base_dir+'/models/'+ model_name +'_'+ training +'_'+ dataset +'_early.pt'
@@ -327,8 +327,8 @@ for epoch in range(num_epochs):
     # Early stopping in case of overfitting
     if early_stopper.early_stop(running_loss):
         #torch.save(model.state_dict(), model_dir_early)
-        print("\n"+"Training stop early at epoch ",epoch,"/",num_epochs," with a loss of : ",running_loss/total,", and accuracy of : ",100*correct/total)
-        stopping_list.append(epoch)
+        print("\n"+"Training stop early at epoch ",epoch+1,"/",num_epochs," with a loss of : ",running_loss/total,", and accuracy of : ",100*correct/total)
+        stopping_list.append(epoch+1)
 
 if len(stopping_list) == 0:
     print("Pas d'overfiting !")
