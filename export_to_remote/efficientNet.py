@@ -272,7 +272,6 @@ for epoch in range(num_epochs):
         optimizer.zero_grad()
         loss.backward()
         optimizer.step()
-        scheduler.step()
 
         # For accuracy
         _, predicted = torch.max(outputs.data, 1)
@@ -282,6 +281,8 @@ for epoch in range(num_epochs):
         print("\r"+"Batch training : ",i+1,"/",number_batch ,end="")
 
         torch.cuda.empty_cache()
+    
+    scheduler.step() # updates the lr value
 
     # del images, labels, outputs
     # torch.cuda.empty_cache()
