@@ -177,7 +177,7 @@ class VGG16(nn.Module):
 
 ## Hyperparameters
 num_classes = 100
-num_epochs = 5
+num_epochs = 200
 batch_size = 32
 learning_rate = 0.001
 weight_decay = 0.00004
@@ -224,10 +224,11 @@ scheduler = CosineAnnealingLR(optimizer,
 #                      max_lr = learning_rate, # Upper learning rate boundaries in the cycle for each parameter group
 #                      step_size_up = 5, # Number of training iterations in the increasing half of a cycle
 #                      mode = "exp_range")
+regu_incr = (weight_decay*100-weight_decay)/(num_epochs-end_sched)
 
 # Early stopping
 patience = 3
-delta_loss = 0.001
+delta_loss = 0.002
 early_stopper = EarlyStopper(patience, delta_loss)
 stopping_list = []
 
@@ -286,10 +287,10 @@ for epoch in range(num_epochs):
 
         torch.cuda.empty_cache()
     
-    # Scheduler
+    # Schedulers
     scheduler.step() # updates the lr value
     if epoch > end_sched:
-        weight_decay *= 1.02 # update the regularization value
+        weight_decay += regu_incr # update the regularization value
 
     # del images, labels, outputs
     # torch.cuda.empty_cache()
@@ -334,7 +335,15 @@ for epoch in range(num_epochs):
 
     # Early stopping in case of overfitting
     if early_stopper.early_stop(running_loss):
-        #torch.save(model.state_dict(), model_dir_early)
+        model_state = {'model name': model_name,
+                       'model': model,
+                       'optimizer': optimizer,
+                       'epoch': num_epochs,
+                       'training': training,
+                       'dataset': dataset,
+                       'accuracy': 100*correct/total,
+                       'loss': running_loss/total}
+        torch.save(model_state, 'epoch'+str(epoch)+'_'+model_dir_early)
         print("\n"+"Training stop early at epoch ",epoch+1,"/",num_epochs," with a loss of : ",running_loss/total,", and accuracy of : ",100*correct/total)
         stopping_list.append(epoch+1)
 
@@ -343,18 +352,18 @@ if len(stopping_list) == 0:
 else :
     print("\n"+"Les epoch d'early stop sont : ",stopping_list)
 
-# # ------------------------------------------
-# # save the model and weights
-# model_state = {'model name': model_name,
-#         'model': model,
-#         'optimizer': optimizer,
-#         'epoch': num_epochs,
-#         'training': training,
-#         'dataset': dataset,
-#         'accuracy': 100*correct/total,
-#         'loss': running_loss/total}
-# torch.save(model_state, model_dir)
-# print("Modèle sauvegardé dans le chemin : ",model_dir)
+# ------------------------------------------
+# save the model and weights
+model_state = {'model name': model_name,
+        'model': model,
+        'optimizer': optimizer,
+        'epoch': num_epochs,
+        'training': training,
+        'dataset': dataset,
+        'accuracy': 100*correct/total,
+        'loss': running_loss/total}
+torch.save(model_state, model_dir)
+print("Modèle sauvegardé dans le chemin : ",model_dir)
 
 # # ------------------------------------------
 # # save the metrics
