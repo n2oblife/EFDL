@@ -208,7 +208,6 @@ dataset = 'cifar100'
 model = densenet_cifar(num_classes).to(device) #densnet121
 #model = EfficientNet.from_name('efficientnet-b1', num_classes=num_classes).to(device)
 model_dir = base_dir+'/models/'+model_name +'_'+ training +'_'+ dataset +'.pt'
-model_dir_early = base_dir+'/models/'+ model_name +'_'+ training +'_'+ dataset +'_early.pt'
 
 # Loss and optimizer
 criterion = nn.CrossEntropyLoss()
@@ -335,15 +334,16 @@ for epoch in range(num_epochs):
 
     # Early stopping in case of overfitting
     if early_stopper.early_stop(running_loss):
+        model_dir_early = base_dir+'/models/'+ model_name +'_'+ training +'_'+ dataset +'_epoch'+str(epoch)+'_early.pt'
         model_state = {'model name': model_name,
                        'model': model,
                        'optimizer': optimizer,
-                       'epoch': num_epochs,
+                       'epoch': epoch,
                        'training': training,
                        'dataset': dataset,
                        'accuracy': 100*correct/total,
                        'loss': running_loss/total}
-        torch.save(model_state, 'epoch'+str(epoch)+'_'+model_dir_early)
+        torch.save(model_state, model_dir_early)
         print("\n"+"Training stop early at epoch ",epoch+1,"/",num_epochs," with a loss of : ",running_loss/total,", and accuracy of : ",100*correct/total)
         stopping_list.append(epoch+1)
 
