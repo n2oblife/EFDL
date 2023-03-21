@@ -65,6 +65,10 @@ class DenseNet(nn.Module):
 
         self.bn = nn.BatchNorm2d(num_planes)
         self.linear = nn.Linear(num_planes, num_classes)
+        
+        # Define proportion or neurons to dropout
+        self.dropout = nn.Dropout(0.2)
+
 
     def _make_dense_layers(self, block, in_planes, nblock):
         layers = []
