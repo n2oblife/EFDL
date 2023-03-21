@@ -107,6 +107,7 @@ dataset = 'cifar100'
 model = densenet_cifar(num_classes).to(device) #densnet121
 #model = EfficientNet.from_name('efficientnet-b1', num_classes=num_classes).to(device)
 model_dir = base_dir+'/models/'+model_name +'_'+ training +'_'+ dataset +'.pt'
+print('Beginning of training : '+model_name)
 
 #model_bc = bc.BC(model).to(device) ### use this to prepare your model for binarization 
 
@@ -174,6 +175,8 @@ number_batch = len(trainloader)
 for epoch in range(num_epochs):
 
     print(f'Epoch [{epoch+1}/{num_epochs}]')
+    if epoch> end_sched:
+        lets_regul=True
           
     running_loss = 0.
     correct = 0
@@ -269,7 +272,7 @@ for epoch in range(num_epochs):
     if early_stopper.early_stop(running_loss):
 
         lets_regul = True
-        regu_incr *= 2 # increase regularization
+        regu_incr *= 1.01 # increase regularization
 
         model_dir_early = base_dir+'/models/'+ model_name +'_'+ training +'_'+ dataset +'_epoch'+str(epoch)+'_early.pt'
         model_state = {'model name': model_name,
