@@ -15,6 +15,7 @@ import torch.nn.utils.prune as prune
 
 from torchvision import models
 from efficientnet_pytorch import EfficientNet
+from Densnet import densenet_cifar
 
 from torchvision.datasets import CIFAR10
 from torchvision.datasets import CIFAR100
@@ -181,7 +182,7 @@ batch_size = 32
 learning_rate = 0.001
 weight_decay = 0.00004
 momentum = 0.9
-#end_sched = int(2*num_epochs/3)
+end_sched = int(3*num_epochs/4)
 
 # Base directory from EFDL to EFDL_storage
 base_dir = '../EFDL_storage'
@@ -204,7 +205,8 @@ num_samples_subset = 15000
 model_name = 'efficientnet-b1'
 training = 'base'
 dataset = 'cifar100'
-model = EfficientNet.from_name('efficientnet-b1', num_classes=num_classes).to(device)
+model = densenet_cifar().to(device)
+#model = EfficientNet.from_name('efficientnet-b1', num_classes=num_classes).to(device)
 model_dir = base_dir+'/models/'+model_name +'_'+ training +'_'+ dataset +'.pt'
 model_dir_early = base_dir+'/models/'+ model_name +'_'+ training +'_'+ dataset +'_early.pt'
 
