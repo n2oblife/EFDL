@@ -12,13 +12,13 @@ from torch.utils.data import DataLoader
 import torch.nn.functional as F
 import torch.optim as optim
 import torch.nn.utils.prune as prune
+from torch.autograd import Variable
 
 from torchvision import models
 from efficientnet_pytorch import EfficientNet
 from Densnet import densenet_cifar
 
-from torchvision.datasets import CIFAR10
-from torchvision.datasets import CIFAR100
+from torchvision.datasets import CIFAR10,CIFAR100
 from torch.utils.data.sampler import SubsetRandomSampler
 
 from torch.optim.lr_scheduler import CosineAnnealingLR
@@ -61,6 +61,8 @@ class AddGaussianNoise(object):
 transform_train = transforms.Compose([
     transforms.RandomCrop(32, padding=4),
     transforms.RandomHorizontalFlip(),
+    transforms.RandomGrayscale(0.1),
+    transforms.ColorJitter(brightness=0.3, contrast=0.2, saturation=0.1, hue=0.1),
     transforms.RandomRotation(45),
     AddGaussianNoise(0., 0.001),
     transforms.ToTensor(),
@@ -71,123 +73,20 @@ transform_test = transforms.Compose([
     transforms.ToTensor(),
     normalize_scratch,])
 
-##
-# Parameters in original paper for optim
-# batch = 64 / 90 epochs / Learning rate: 0.1, decreased by a factor of 10 at epochs 30 and 60 / Weight decay and momentum: 0.00004 and 0.9
-# Utiliser le dropout pour éviter un gros overfitting et le mixup
-##
-
-# ---------------------------------------------------------------
-# Definition of the model
-
-class VGG16(nn.Module):
-    def __init__(self, num_classes=10):
-        super(VGG16, self).__init__()
-        self.layer1 = nn.Sequential(
-            nn.Conv2d(3, 64, kernel_size=3, stride=1, padding=1),
-            nn.BatchNorm2d(64),
-            nn.ReLU())
-        self.layer2 = nn.Sequential(
-            nn.Conv2d(64, 64, kernel_size=3, stride=1, padding=1),
-            nn.BatchNorm2d(64),
-            nn.ReLU(), 
-            nn.MaxPool2d(kernel_size = 2, stride = 2))
-        self.layer3 = nn.Sequential(
-            nn.Conv2d(64, 128, kernel_size=3, stride=1, padding=1),
-            nn.BatchNorm2d(128),
-            nn.ReLU())
-        self.layer4 = nn.Sequential(
-            nn.Conv2d(128, 128, kernel_size=3, stride=1, padding=1),
-            nn.BatchNorm2d(128),
-            nn.ReLU(),
-            nn.MaxPool2d(kernel_size = 2, stride = 2))
-        self.layer5 = nn.Sequential(
-            nn.Conv2d(128, 256, kernel_size=3, stride=1, padding=1),
-            nn.BatchNorm2d(256),
-            nn.ReLU())
-        self.layer6 = nn.Sequential(
-            nn.Conv2d(256, 256, kernel_size=3, stride=1, padding=1),
-            nn.BatchNorm2d(256),
-            nn.ReLU())
-        self.layer7 = nn.Sequential(
-            nn.Conv2d(256, 256, kernel_size=3, stride=1, padding=1),
-            nn.BatchNorm2d(256),
-            nn.ReLU(),
-            nn.MaxPool2d(kernel_size = 2, stride = 2))
-        self.layer8 = nn.Sequential(
-            nn.Conv2d(256, 512, kernel_size=3, stride=1, padding=1),
-            nn.BatchNorm2d(512),
-            nn.ReLU())
-        self.layer9 = nn.Sequential(
-            nn.Conv2d(512, 512, kernel_size=3, stride=1, padding=1),
-            nn.BatchNorm2d(512),
-            nn.ReLU())
-        self.layer10 = nn.Sequential(
-            nn.Conv2d(512, 512, kernel_size=3, stride=1, padding=1),
-            nn.BatchNorm2d(512),
-            nn.ReLU(),
-            nn.MaxPool2d(kernel_size = 2, stride = 2))
-        self.layer11 = nn.Sequential(
-            nn.Conv2d(512, 512, kernel_size=3, stride=1, padding=1),
-            nn.BatchNorm2d(512),
-            nn.ReLU())
-        self.layer12 = nn.Sequential(
-            nn.Conv2d(512, 512, kernel_size=3, stride=1, padding=1),
-            nn.BatchNorm2d(512),
-            nn.ReLU())
-        self.layer13 = nn.Sequential(
-            nn.Conv2d(512, 512, kernel_size=3, stride=1, padding=1),
-            nn.BatchNorm2d(512),
-            nn.ReLU(),
-            nn.MaxPool2d(kernel_size = 2, stride = 2))
-        self.fc = nn.Sequential(
-            nn.Dropout(0.5),
-            #nn.Linear(7*7*512, 4096),
-            nn.Linear(512, 4096),
-            nn.ReLU())
-        self.fc1 = nn.Sequential(
-            nn.Dropout(0.5),
-            nn.Linear(4096, 4096),
-            nn.ReLU())
-        self.fc2= nn.Sequential(
-            nn.Linear(4096, num_classes))
-        
-    def forward(self, x):
-        out = self.layer1(x)
-        out = self.layer2(out)
-        out = self.layer3(out)
-        out = self.layer4(out)
-        out = self.layer5(out)
-        out = self.layer6(out)
-        out = self.layer7(out)
-        out = self.layer8(out)
-        out = self.layer9(out)
-        out = self.layer10(out)
-        out = self.layer11(out)
-        out = self.layer12(out)
-        out = self.layer13(out)
-        out = out.reshape(out.size(0), -1)
-        out = self.fc(out)
-        out = self.fc1(out)
-        out = self.fc2(out)
-        return out
-    
-# --------------------------------------------------------------
-
 
 ## Hyperparameters
 num_classes = 100
-num_epochs = 200
+num_epochs = 150
 batch_size = 32
 learning_rate = 0.001
 weight_decay = 0.00004
 momentum = 0.9
 end_sched = int(3*num_epochs/4)
 
-# Base directory from EFDL to EFDL_storage
+## Base directory from EFDL to EFDL_storage
 base_dir = '../EFDL_storage'
 
-### The data from CIFAR100 will be downloaded in the following folder
+# The data from CIFAR100 will be downloaded in the following folder
 rootdir = base_dir+'/data/cifar100'
 
 # adapt the set for test
@@ -209,12 +108,14 @@ model = densenet_cifar(num_classes).to(device) #densnet121
 #model = EfficientNet.from_name('efficientnet-b1', num_classes=num_classes).to(device)
 model_dir = base_dir+'/models/'+model_name +'_'+ training +'_'+ dataset +'.pt'
 
+#model_bc = bc.BC(model).to(device) ### use this to prepare your model for binarization 
+
 # Loss and optimizer
 criterion = nn.CrossEntropyLoss()
-optimizer = optim.SGD(model.parameters(),
-                            lr=learning_rate,
-                            # weight_decay = weight_decay, # if no weight decay it means we are regularizing
-                            momentum = momentum)  
+optimizer = optim.SGD( model.parameters(),
+                        lr=learning_rate,
+                        # weight_decay = weight_decay, # if no weight decay it means we are regularizing
+                        momentum = momentum)  
 scheduler = CosineAnnealingLR(optimizer,
                               T_max = num_epochs, # Maximum number of iterations.
                               eta_min = learning_rate/100) # Minimum learning rate.
@@ -223,7 +124,29 @@ scheduler = CosineAnnealingLR(optimizer,
 #                      max_lr = learning_rate, # Upper learning rate boundaries in the cycle for each parameter group
 #                      step_size_up = 5, # Number of training iterations in the increasing half of a cycle
 #                      mode = "exp_range")
+lets_regul = False
 regu_incr = (weight_decay*100-weight_decay)/(num_epochs-end_sched)
+
+# Mixups
+def mixup_data(x, y, alpha=0.2, use_cuda=True):
+    '''Returns mixed inputs, pairs of targets, and lambda'''
+    if alpha > 0:
+        lam = np.random.beta(alpha, alpha)
+    else:
+        lam = 1
+
+    batch_size = x.size()[0]
+    if use_cuda:
+        index = torch.randperm(batch_size).cuda()
+    else:
+        index = torch.randperm(batch_size)
+
+    mixed_x = lam * x + (1 - lam) * x[index, :]
+    y_a, y_b = y, y[index]
+    return mixed_x, y_a, y_b, lam
+
+def mixup_criterion(criterion, pred, y_a, y_b, lam):
+    return lam * criterion(pred, y_a) + (1 - lam) * criterion(pred, y_b)
 
 # Early stopping
 patience = 3
@@ -259,13 +182,22 @@ for epoch in range(num_epochs):
     model.train()
     for i, (images, labels) in enumerate(trainloader) :  
         # Move tensors to the configured device
-        images, labels = images.to(device), labels.to(device)
+        images = images.to(device=device, dtype=torch.float32)
+        labels = labels.to(device=device, dtype=torch.long)
+
+        # mixup function
+        images, label_a, label_b, lam = mixup_data(images, labels, 0.2, 10)
+        images, label_a, label_b = map(Variable, (images, label_a, label_b))
+            
+        # This binarizes all weights in the model
+        #model.binarization()
 
         # Forward pass
         outputs = model(images)
 
         # Compute loss
-        loss = criterion(outputs, labels)
+        #loss = criterion(outputs, labels)
+        loss = mixup_criterion(criterion, outputs, label_a, label_b, lam)
         running_loss += loss.item() # pour calculer sur une moyenne d'epoch
         
         l2_regu = weight_decay * sum([(p**2).sum() for p in model.parameters()])
@@ -277,9 +209,11 @@ for epoch in range(num_epochs):
         loss_with_penalty.backward() # for l2 regularization
         optimizer.step()
 
-        # For accuracy
+        # For accuracy (up : classic, down : mixup)
         _, predicted = torch.max(outputs.data, 1)
-        correct += (predicted == labels).float().sum().item()
+        #correct += (predicted == labels).float().sum().item()
+        correct += (lam * predicted.eq(label_a.data).cpu().sum().item()
+                    + (1 - lam) * predicted.eq(label_b.data).cpu().sum().item())
         total += labels.size(0)
 
         print("\r"+"Batch training : ",i+1,"/",number_batch ,end="")
@@ -288,7 +222,7 @@ for epoch in range(num_epochs):
     
     # Schedulers
     scheduler.step() # updates the lr value
-    if epoch > end_sched:
+    if lets_regul:
         weight_decay += regu_incr # update the regularization value
 
     # del images, labels, outputs
@@ -330,10 +264,13 @@ for epoch in range(num_epochs):
         # torch.cuda.empty_cache()
 
     print(f'Validation loss: {val_losses[-1]:.4f} , Validation accuracy: {val_acc[-1]:.4f}')
-    print('---------------------------------------')
 
     # Early stopping in case of overfitting
     if early_stopper.early_stop(running_loss):
+
+        lets_regul = True
+        regu_incr *= 2 # increase regularization
+
         model_dir_early = base_dir+'/models/'+ model_name +'_'+ training +'_'+ dataset +'_epoch'+str(epoch)+'_early.pt'
         model_state = {'model name': model_name,
                        'model': model,
@@ -346,6 +283,8 @@ for epoch in range(num_epochs):
         torch.save(model_state, model_dir_early)
         print("\n"+"Training stop early at epoch ",epoch+1,"/",num_epochs," with a loss of : ",running_loss/total,", and accuracy of : ",100*correct/total)
         stopping_list.append(epoch+1)
+    
+    print('---------------------------------------')
 
 if len(stopping_list) == 0:
     print("Pas d'overfiting !")
