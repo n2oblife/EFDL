@@ -61,7 +61,7 @@ transform_train = transforms.Compose([
     transforms.RandomCrop(32, padding=4),
     transforms.RandomHorizontalFlip(),
     transforms.RandomRotation(45),
-    AddGaussianNoise(0., 0.01),
+    AddGaussianNoise(0., 0.001),
     transforms.ToTensor(),
     normalize_scratch,
 ])
@@ -201,11 +201,10 @@ num_train_examples = len(c100train)
 num_samples_subset = 15000
 
 # Model definition
-model_name = 'vgg16'
+model_name = 'efficientnet-b1'
 training = 'base'
 dataset = 'cifar100'
-#model = EfficientNet.from_name('efficientnet-b1', num_classes=num_classes).to(device)
-model = VGG16(num_classes).to(device)
+model = EfficientNet.from_name('efficientnet-b1', num_classes=num_classes).to(device)
 model_dir = base_dir+'/models/'+model_name +'_'+ training +'_'+ dataset +'.pt'
 model_dir_early = base_dir+'/models/'+ model_name +'_'+ training +'_'+ dataset +'_early.pt'
 
