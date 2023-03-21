@@ -202,11 +202,11 @@ num_train_examples = len(c100train)
 num_samples_subset = 15000
 
 # Model definition
-model_name = 'efficientnet-b1'
+model_name = 'densnet121'
 training = 'base'
 dataset = 'cifar100'
-#model = densenet_cifar(num_classes).to(device) #densnet121
-model = EfficientNet.from_name('efficientnet-b1', num_classes=num_classes).to(device)
+model = densenet_cifar(num_classes).to(device) #densnet121
+#model = EfficientNet.from_name('efficientnet-b1', num_classes=num_classes).to(device)
 model_dir = base_dir+'/models/'+model_name +'_'+ training +'_'+ dataset +'.pt'
 model_dir_early = base_dir+'/models/'+ model_name +'_'+ training +'_'+ dataset +'_early.pt'
 
@@ -214,7 +214,7 @@ model_dir_early = base_dir+'/models/'+ model_name +'_'+ training +'_'+ dataset +
 criterion = nn.CrossEntropyLoss()
 optimizer = optim.SGD(model.parameters(),
                             lr=learning_rate,
-                            weight_decay = weight_decay,
+                            # weight_decay = weight_decay, # if no weight decay it means we are regularizing
                             momentum = momentum)  
 scheduler = CosineAnnealingLR(optimizer,
                               T_max = num_epochs, # Maximum number of iterations.
@@ -267,10 +267,14 @@ for epoch in range(num_epochs):
         # Compute loss
         loss = criterion(outputs, labels)
         running_loss += loss.item() # pour calculer sur une moyenne d'epoch
+        
+        l2_penalty = weight_decay * sum([(p**2).sum() for p in model.hidden.parameters()])
+        loss_with_penalty = loss + l2_penalty
 
         # Backward and optimize
         optimizer.zero_grad()
-        loss.backward()
+        #loss.backward()
+        loss_with_penalty.backward() # for l2 regularization
         optimizer.step()
 
         # For accuracy
@@ -282,7 +286,10 @@ for epoch in range(num_epochs):
 
         torch.cuda.empty_cache()
     
+    # Scheduler
     scheduler.step() # updates the lr value
+    if i > end_sched:
+        weight_decay *= 1.02 # update the regularization value
 
     # del images, labels, outputs
     # torch.cuda.empty_cache()
