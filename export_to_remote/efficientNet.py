@@ -268,7 +268,7 @@ for epoch in range(num_epochs):
         loss = criterion(outputs, labels)
         running_loss += loss.item() # pour calculer sur une moyenne d'epoch
         
-        l2_penalty = weight_decay * sum([(p**2).sum() for p in model.hidden.parameters()])
+        l2_penalty = weight_decay * sum([(p**2).sum() for p in model.parameters()])
         loss_with_penalty = loss + l2_penalty
 
         # Backward and optimize
