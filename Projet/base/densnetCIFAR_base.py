@@ -15,6 +15,7 @@ from torch.optim.lr_scheduler import CosineAnnealingLR
 
 from Densnet import densenet_cifar
 from EarlyStopper import EarlyStopper
+from GaussianNoise import AddGaussianNoise
 
 
 
@@ -36,6 +37,11 @@ try :
     # Here, Data augmentation (RandomCrop and Horizontal Flip) are applied to each batch, differently at each epoch, on the training set data only
     transform_train = transforms.Compose([
         transforms.RandomCrop(32, padding=4),
+        transforms.RandomHorizontalFlip(),
+        transforms.RandomGrayscale(0.1),
+        transforms.ColorJitter(brightness=0.3, contrast=0.2, saturation=0.1, hue=0.1),
+        transforms.RandomRotation(45),
+        AddGaussianNoise(0., 0.001),
         transforms.ToTensor(),
         normalize_scratch])
 
