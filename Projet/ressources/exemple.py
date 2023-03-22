@@ -79,8 +79,8 @@ try :
 
     ## Hyperparameters
     num_classes = 10
-    num_epochs = 20
-    batch_size = 32
+    num_epochs = 180
+    batch_size = 64
     learning_rate = 0.001
     weight_decay = 0.00004
     momentum = 0.9
@@ -118,7 +118,7 @@ try :
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.SGD( model.parameters(),
                             lr=learning_rate,
-                            # weight_decay = weight_decay, # if no weight decay it means we are regularizing
+                            weight_decay = weight_decay, # if no weight decay it means we are regularizing
                             momentum = momentum)  
     scheduler = CosineAnnealingLR(optimizer,
                                 T_max = num_epochs, # Maximum number of iterations.
@@ -206,13 +206,13 @@ try :
             loss = mixup_criterion(criterion, outputs, label_a, label_b, lam)
             running_loss += loss.item() # pour calculer sur une moyenne d'epoch
             
-            l2_regu = weight_decay * sum([(p**2).sum() for p in model.parameters()])
-            loss_with_penalty = loss + l2_regu
+            # l2_regu = weight_decay * sum([(p**2).sum() for p in model.parameters()])
+            # loss_with_penalty = loss + l2_regu
 
             # Backward and optimize
             optimizer.zero_grad()
             #loss.backward()
-            loss_with_penalty.backward() # for l2 regularization
+            loss.backward() # for l2 regularization
             optimizer.step()
 
             # For accuracy (up : classic, down : mixup)
@@ -228,8 +228,8 @@ try :
         
         # Schedulers
         scheduler.step() # updates the lr value
-        if lets_regul:
-            weight_decay += regu_incr # update the regularization value
+        # if lets_regul:
+        #     weight_decay += regu_incr # update the regularization value
 
         # del images, labels, outputs
         # torch.cuda.empty_cache()
@@ -274,9 +274,6 @@ try :
         # Early stopping in case of overfitting
         if early_stopper.early_stop(running_loss):
 
-            lets_regul = True
-            regu_incr *= 1.01 # increase regularization
-
             model_dir_early = base_dir+'/models/'+ model_name +'_'+ training +'_'+ dataset +'_epoch'+str(epoch)+'_early.pt'
             model_state = {'model name': model_name,
                         'model': model,
@@ -284,8 +281,11 @@ try :
                         'epoch': epoch,
                         'training': training,
                         'dataset': dataset,
-                        'accuracy': 100*correct/total,
-                        'loss': running_loss/total}
+                        'metrics' : {'train_loss' : train_losses,
+                                     'val_loss' :val_losses,
+                                     'train_acc' :train_acc,
+                                     'val_acc' : val_acc}
+                        }
             torch.save(model_state, model_dir_early)
             print("\n"+"Training stop early at epoch ",epoch+1,"/",num_epochs," with a loss of : ",running_loss/total,", and accuracy of : ",100*correct/total)
             stopping_list.append(epoch+1)
@@ -315,12 +315,6 @@ try :
 
 except KeyboardInterrupt:
     print("\nKeyboard interrupt, here are the metrics so far")
-    print("epoch list : ",epoch_list)
-    print("training loss : ",train_losses)
-    print("validation loss : ",val_losses)
-    print("training accuracy : ",train_acc)
-    print("validation accuracy : ",val_acc)
-    print("stopping list : ",stopping_list)
 
     model_state = {'model name': model_name,
         'model': model,
@@ -328,8 +322,11 @@ except KeyboardInterrupt:
         'epoch': num_epochs,
         'training': training,
         'dataset': dataset,
-        'accuracy': 100*correct/total,
-        'loss': running_loss/total}
+        'metrics' : {'train_loss' : train_losses,
+                                     'val_loss' :val_losses,
+                                     'train_acc' :train_acc,
+                                     'val_acc' : val_acc}
+        }
     torch.save(model_state, model_dir)
     print("Modèle sauvegardé dans le chemin : ",model_dir)
 
