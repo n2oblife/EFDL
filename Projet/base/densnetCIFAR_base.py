@@ -63,14 +63,14 @@ try :
     rootdir = base_dir+'/data/'+dataset
 
     # adapt the set for test
-    c100train = CIFAR10(rootdir,train=True,download=True,transform=transform_train)
-    c100test = CIFAR10(rootdir,train=False,download=True,transform=transform_test)
+    c10train = CIFAR10(rootdir,train=True,download=True,transform=transform_train)
+    c10test = CIFAR10(rootdir,train=False,download=True,transform=transform_test)
 
-    trainloader = DataLoader(c100train,batch_size=batch_size,shuffle=True)
-    testloader = DataLoader(c100test,batch_size=batch_size) 
+    trainloader = DataLoader(c10train,batch_size=batch_size,shuffle=True)
+    testloader = DataLoader(c10test,batch_size=batch_size) 
 
     ## number of target samples for the final dataset
-    num_train_examples = len(c100train)
+    num_train_examples = len(c10train)
     num_samples_subset = 15000
 
     # Model definition
@@ -116,7 +116,9 @@ try :
     number_batch = len(trainloader)
 
     for epoch in range(num_epochs):
-            
+        
+        print(f'Epoch [{epoch+1}/{num_epochs}]')
+
         running_loss = 0.
         correct = 0
         total = 0
