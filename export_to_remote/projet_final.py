@@ -318,12 +318,12 @@ try :
 
 except KeyboardInterrupt:
     print("Keyboard interrupt, here are the metrics so far")
-    print("epoch list : ",list(epoch_list))
-    print("training loss : ",list(train_losses))
-    print("validation loss : ",list(val_losses))
-    print("training accuracy : ",list(train_acc))
-    print("validation accuracy : ",list(val_acc))
-    print("stopping list : ",list(stopping_list))
+    print("epoch list : ",epoch_list)
+    print("training loss : ",train_losses)
+    print("validation loss : ",val_losses)
+    print("training accuracy : ",train_acc)
+    print("validation accuracy : ",val_acc)
+    print("stopping list : ",stopping_list)
 
 finally:
     print("end of training script of ",model_name)
