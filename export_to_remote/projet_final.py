@@ -317,7 +317,7 @@ try :
 # # save the metrics
 
 except KeyboardInterrupt:
-    print("Keyboard interrupt, here are the metrics so far")
+    print("\nKeyboard interrupt, here are the metrics so far")
     print("epoch list : ",epoch_list)
     print("training loss : ",train_losses)
     print("validation loss : ",val_losses)
