@@ -26,6 +26,7 @@ from torch.optim.lr_scheduler import CyclicLR
 
 import Binaryconnect as bc
 from EarlyStopper import EarlyStopper
+from torchinfo import summary
 
 # hanlde keyboard interrupt
 import signal
@@ -69,8 +70,8 @@ try :
         transforms.RandomHorizontalFlip(),
         transforms.RandomGrayscale(0.1),
         transforms.ColorJitter(brightness=0.3, contrast=0.2, saturation=0.1, hue=0.1),
-        transforms.RandomRotation(45),
-        AddGaussianNoise(0., 0.001),
+        #transforms.RandomRotation(45),
+        AddGaussianNoise(0., 0.0001),
         transforms.ToTensor(),
         normalize_scratch,
     ])
@@ -324,6 +325,17 @@ except KeyboardInterrupt:
     print("training accuracy : ",train_acc)
     print("validation accuracy : ",val_acc)
     print("stopping list : ",stopping_list)
+
+    model_state = {'model name': model_name,
+        'model': model,
+        'optimizer': optimizer,
+        'epoch': num_epochs,
+        'training': training,
+        'dataset': dataset,
+        'accuracy': 100*correct/total,
+        'loss': running_loss/total}
+    torch.save(model_state, model_dir)
+    print("Modèle sauvegardé dans le chemin : ",model_dir)
 
 finally:
     print("end of training script of ",model_name)
