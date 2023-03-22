@@ -82,7 +82,7 @@ try :
 
 
     ## Hyperparameters
-    num_classes = 100
+    num_classes = 10
     num_epochs = 20
     batch_size = 32
     learning_rate = 0.001
@@ -114,7 +114,7 @@ try :
     model = densenet_cifar(num_classes).to(device) #densnet121
     #model = EfficientNet.from_name('efficientnet-b1', num_classes=num_classes).to(device)
     model_dir = base_dir+'/models/'+model_name +'_'+ training +'_'+ dataset +'.pt'
-    print('Beginning of training : '+model_name)
+    print('Beginning of training : '+model_name+' on '+dataset)
 
     #model_bc = bc.BC(model).to(device) ### use this to prepare your model for binarization 
 
