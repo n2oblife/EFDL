@@ -70,8 +70,8 @@ try :
         transforms.RandomHorizontalFlip(),
         transforms.RandomGrayscale(0.1),
         transforms.ColorJitter(brightness=0.3, contrast=0.2, saturation=0.1, hue=0.1),
-        #transforms.RandomRotation(45),
-        AddGaussianNoise(0., 0.0001),
+        transforms.RandomRotation(45),
+        AddGaussianNoise(0., 0.001),
         transforms.ToTensor(),
         normalize_scratch,
     ])
@@ -83,7 +83,7 @@ try :
 
     ## Hyperparameters
     num_classes = 100
-    num_epochs = 150
+    num_epochs = 20
     batch_size = 32
     learning_rate = 0.001
     weight_decay = 0.00004
@@ -110,7 +110,7 @@ try :
     # Model definition
     model_name = 'densnet121'
     training = 'base'
-    dataset = 'cifar100'
+    dataset = 'cifar10'
     model = densenet_cifar(num_classes).to(device) #densnet121
     #model = EfficientNet.from_name('efficientnet-b1', num_classes=num_classes).to(device)
     model_dir = base_dir+'/models/'+model_name +'_'+ training +'_'+ dataset +'.pt'
