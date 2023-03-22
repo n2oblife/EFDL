@@ -10,10 +10,10 @@ import torchvision.transforms as transforms
 from torch.utils.data import DataLoader
 import torch.optim as optim
 
-from Densnet import densenet_cifar
-
 from torchvision.datasets import CIFAR10, CIFAR100
+from torch.optim.lr_scheduler import CosineAnnealingLR
 
+from Densnet import densenet_cifar
 from EarlyStopper import EarlyStopper
 
 
@@ -46,10 +46,10 @@ try :
 
     ## Hyperparameters
     num_classes = 10
-    num_epochs = 20
-    batch_size = 32
+    num_epochs = 120
+    batch_size = 64
     learning_rate = 0.001
-    weight_decay = 0.00004
+    weight_decay = 10e-4
     momentum = 0.9
 
     ## Defining training and dataset
@@ -81,15 +81,19 @@ try :
     print('Beginning of training : '+model_name+' on '+dataset)
 
     # Loss and optimizer
+    end_sched = max(int(4*num_epochs/5), 100)
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.SGD( model.parameters(),
                             lr=learning_rate,
                             weight_decay = weight_decay, # if no weight decay it means we are regularizing
-                            momentum = momentum)  
+                            momentum = momentum) 
+    scheduler = CosineAnnealingLR(optimizer,
+                                T_max = end_sched, # Maximum number of iterations.
+                                eta_min = learning_rate/100) # Minimum learning rate. 
    
    
     # Early stopping
-    patience = 5
+    patience = 3
     delta_loss = 0.002
     early_stopper = EarlyStopper(patience, delta_loss)
     stopping_list = []
