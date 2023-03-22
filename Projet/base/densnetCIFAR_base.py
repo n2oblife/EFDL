@@ -14,7 +14,7 @@ from Densnet import densenet_cifar
 
 from torchvision.datasets import CIFAR10, CIFAR100
 
-from ressources.EarlyStopper import EarlyStopper
+from EarlyStopper import EarlyStopper
 
 
 
