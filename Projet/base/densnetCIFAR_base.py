@@ -10,7 +10,7 @@ import torchvision.transforms as transforms
 from torch.utils.data import DataLoader
 import torch.optim as optim
 
-from ressources.Densnet import densenet_cifar
+from Densnet import densenet_cifar
 
 from torchvision.datasets import CIFAR10, CIFAR100
 
