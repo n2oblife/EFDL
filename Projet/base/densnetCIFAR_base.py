@@ -1,6 +1,6 @@
 # Importing file from ressources
 import sys
-sys.path.insert(1,'/users/local/ZacDL/EFDL/Projet/ressources/')
+sys.path.append('/users/local/ZacDL/EFDL/Projet/ressources/')
 
 import torch 
 import numpy as np
