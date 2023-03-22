@@ -112,10 +112,6 @@ try :
     number_batch = len(trainloader)
 
     for epoch in range(num_epochs):
-
-        print(f'Epoch [{epoch+1}/{num_epochs}]')
-        if epoch> end_sched:
-            lets_regul=True
             
         running_loss = 0.
         correct = 0
