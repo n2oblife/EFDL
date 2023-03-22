@@ -97,8 +97,8 @@ try :
     rootdir = base_dir+'/data/cifar100'
 
     # adapt the set for test
-    c100train = CIFAR100(rootdir,train=True,download=True,transform=transform_train)
-    c100test = CIFAR100(rootdir,train=False,download=True,transform=transform_test)
+    c100train = CIFAR10(rootdir,train=True,download=True,transform=transform_train)
+    c100test = CIFAR10(rootdir,train=False,download=True,transform=transform_test)
 
     trainloader = DataLoader(c100train,batch_size=batch_size,shuffle=True)
     testloader = DataLoader(c100test,batch_size=batch_size) 
