@@ -52,7 +52,7 @@ try :
 
     ## Hyperparameters
     num_classes = 10
-    num_epochs = 80
+    num_epochs = 120
     batch_size = 64
     learning_rate = 0.001
     weight_decay = 10e-4
