@@ -3,6 +3,7 @@ import sys
 sys.path.append('/users/local/ZacDL/EFDL/Projet/ressources/')
 
 import torch 
+import numpy as np
 
 import torch.nn as nn
 import torchvision.transforms as transforms
@@ -11,10 +12,12 @@ import torch.optim as optim
 
 from torchvision.datasets import CIFAR10, CIFAR100
 from torch.optim.lr_scheduler import CosineAnnealingLR
+from torch.autograd import Variable
 
 from efficientnet_pytorch import EfficientNet
 from EarlyStopper import EarlyStopper
 from GaussianNoise import AddGaussianNoise
+import Mixup as mxp
 
 
 
@@ -58,7 +61,7 @@ try :
     momentum = 0.9
 
     ## Defining training and dataset
-    training = 'base'
+    training = 'mixup'
     dataset = 'cifar10'
 
     ## Base directory from EFDL to EFDL_storage
@@ -134,22 +137,28 @@ try :
             images = images.to(device=device, dtype=torch.float32)
             labels = labels.to(device=device, dtype=torch.long)
 
+            # mixup function
+            images, label_a, label_b, lam = mxp.mixup_data(images, labels, 0.2, 10)
+            images, label_a, label_b = map(Variable, (images, label_a, label_b))
+                
+
             # Forward pass
             outputs = model(images)
 
             # Compute loss
-            loss = criterion(outputs, labels)
+            loss = mxp.mixup_criterion(criterion, outputs, label_a, label_b, lam)
             running_loss += loss.item() # pour calculer sur une moyenne d'epoch
-            
+            total += labels.size(0)
+
+
             # Backward and optimize
             optimizer.zero_grad()
             #loss.backward()
             optimizer.step()
 
-            # For accuracy (up : classic, down : mixup)
-            _, predicted = torch.max(outputs.data, 1)
-            correct += (predicted == labels).float().sum().item()
-            total += labels.size(0)
+            # For accuracy (accuracy is not worth using for mixup because label weird)
+            # _, predicted = torch.max(outputs.data, 1)
+            # correct += mxp.correct(predicted, label_a,label_b, lam)
 
             print("\r"+"Batch training : ",i+1,"/",number_batch ,end="")
 
@@ -159,8 +168,8 @@ try :
         # torch.cuda.empty_cache()
 
         train_losses.append(running_loss / total)
-        train_acc.append(100*correct/total)
-        print('\r'+f'Train Loss : {train_losses[-1]:.4f} , Train accuracy : {train_acc[-1]:.4f}')
+        # train_acc.append(100*correct/total)
+        print('\r'+f'Train Loss : {train_losses[-1]:.4f}')
 
 
         with torch.no_grad():
@@ -207,7 +216,6 @@ try :
                         'dataset': dataset,
                         'metrics' : {'train_loss' : train_losses,
                                      'val_loss' :val_losses,
-                                     'train_acc' :train_acc,
                                      'val_acc' : val_acc}
                         }
             torch.save(model_state, model_dir_early)
@@ -231,7 +239,6 @@ try :
             'dataset': dataset,
             'metrics' : {'train_loss' : train_losses,
                                      'val_loss' :val_losses,
-                                     'train_acc' :train_acc,
                                      'val_acc' : val_acc}
             }
     torch.save(model_state, model_dir)
@@ -248,9 +255,8 @@ except KeyboardInterrupt:
         'training': training,
         'dataset': dataset,
         'metrics' : {'train_loss' : train_losses,
-                                     'val_loss' :val_losses,
-                                     'train_acc' :train_acc,
-                                     'val_acc' : val_acc}
+                    'val_loss' :val_losses,
+                    'val_acc' : val_acc}
         }
     torch.save(model_state, model_dir)
     print("Modèle sauvegardé dans le chemin : ",model_dir)

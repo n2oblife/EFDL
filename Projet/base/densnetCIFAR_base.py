@@ -3,7 +3,6 @@ import sys
 sys.path.append('/users/local/ZacDL/EFDL/Projet/ressources/')
 
 import torch 
-import numpy as np
 
 import torch.nn as nn
 import torchvision.transforms as transforms
@@ -12,6 +11,7 @@ import torch.optim as optim
 
 from torchvision.datasets import CIFAR10, CIFAR100
 from torch.optim.lr_scheduler import CosineAnnealingLR
+
 
 from Densnet import densenet_cifar
 from EarlyStopper import EarlyStopper
@@ -59,7 +59,7 @@ try :
     momentum = 0.9
 
     ## Defining training and dataset
-    training = 'base'
+    training = 'mixup'
     dataset = 'cifar10'
 
     ## Base directory from EFDL to EFDL_storage
@@ -238,8 +238,6 @@ try :
     torch.save(model_state, model_dir)
     print("Modèle sauvegardé dans le chemin : ",model_dir)
 
-# # ------------------------------------------
-# # save the metrics
 
 except KeyboardInterrupt:
     print("\nKeyboard interrupt, we have saved the model and its metrics")
@@ -260,34 +258,3 @@ except KeyboardInterrupt:
 
 finally:
     print("end of training script of ",model_name)
-
-# my_file = base_dir+'/metrics/'+model_name+'_'+training+'_'+dataset+'.txt'
-# file_dir = base_dir+'/metrics/'+model_name+'_'+training+'_'+dataset+'.png'
-
-# with open(my_file, 'wb') as f:
-#     pickle.dump(train_losses, f)
-#     pickle.dump(val_losses, f)
-#     pickle.dump(train_acc, f)
-#     pickle.dump(val_acc, f)
-
-# plt.subplot(121)
-# plt.plot(epoch_list, train_losses, label = "Training loss")
-# plt.plot(epoch_list, val_losses, label = "Validation loss")
-# plt.xlabel("Epochs")
-# plt.ylabel("%")
-# plt.title("Losses")
-
-# plt.subplot(122)
-# plt.plot(epoch_list, train_acc, label = "Training accuracy")
-# plt.plot(epoch_list, val_acc, label = "Validation accuracy")
-# plt.xlabel("Epochs")
-# plt.ylabel("%")
-# plt.title("Accuracy")
-# plt.legend()
-
-# plt.rcParams['figure.figsize'] = [10, 5] #size of plot
-# plt.suptitle("Effectivness of training")
-# plt.savefig(file_dir)
-# plt.show()
-
-# print("Metriques sauvegardées dans le chemin : ",file_dir)
