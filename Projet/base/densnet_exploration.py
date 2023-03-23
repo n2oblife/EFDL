@@ -84,20 +84,9 @@ try :
     # Early stopping
     patience = 3
     delta_loss = 0.002
-    early_stopper = EarlyStopper(patience, delta_loss)
-    stopping_list = []
 
     # To plot the accruacy
     epoch_list = list(range(num_epochs))
-
-    running_loss = 0.
-    train_losses = []
-    val_losses = []
-
-    correct = 0
-    total = 0
-    train_acc = []
-    val_acc = []
 
     # Train the model
     total_step_train = len(trainloader)
@@ -125,6 +114,18 @@ try :
                                     T_max = end_sched, # Maximum number of iterations.
                                     eta_min = learning_rate/100) # Minimum learning rate. 
         
+        early_stopper = EarlyStopper(patience, delta_loss)
+        stopping_list = []
+
+        running_loss = 0.
+        train_losses = []
+        val_losses = []
+
+        correct = 0
+        total = 0
+        train_acc = []
+        val_acc = []
+
         for epoch in range(num_epochs):
             
             print(f'Epoch [{epoch+1}/{num_epochs}]')
@@ -220,6 +221,8 @@ try :
                 stopping_list.append(epoch+1)
             
             print('---------------------------------------')
+        if early_stopper.earlybreak() :
+            break
 
         if len(stopping_list) == 0:
             print("Pas d'overfiting !")
