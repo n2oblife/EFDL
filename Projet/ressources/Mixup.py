@@ -1,4 +1,5 @@
 import torch
+import numpy as np
 
 def mixup_data(x, y, alpha=0.2, use_cuda=True):
     '''Returns mixed inputs, pairs of targets, and lambda'''
