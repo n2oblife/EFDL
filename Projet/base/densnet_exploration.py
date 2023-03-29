@@ -149,7 +149,7 @@ try :
                 
                 # Backward and optimize
                 optimizer.zero_grad()
-                #loss.backward()
+                loss.backward()
                 optimizer.step()
 
                 # For accuracy (up : classic, down : mixup)

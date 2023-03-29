@@ -17,7 +17,9 @@ from torch.autograd import Variable
 from efficientnet_pytorch import EfficientNet
 from EarlyStopper import EarlyStopper
 from GaussianNoise import AddGaussianNoise
+from InterruptHandler import keybInterrupt
 import Mixup as mxp
+
 
 
 
@@ -153,7 +155,7 @@ try :
 
             # Backward and optimize
             optimizer.zero_grad()
-            #loss.backward()
+            loss.backward()
             optimizer.step()
 
             # For accuracy (accuracy is not worth using for mixup because label weird)
@@ -246,20 +248,12 @@ try :
 
 
 except KeyboardInterrupt:
-    print("\nKeyboard interrupt, we have saved the model and its metrics")
 
-    model_state = {'model name': model_name,
-        'model': model,
-        'optimizer': optimizer,
-        'epoch': num_epochs,
-        'training': training,
-        'dataset': dataset,
-        'metrics' : {'train_loss' : train_losses,
-                    'val_loss' :val_losses,
-                    'val_acc' : val_acc}
-        }
-    torch.save(model_state, model_dir)
-    print("Modèle sauvegardé dans le chemin : ",model_dir)
+    keybInterrupt(model, model_name, optimizer,
+                  num_epochs, training, dataset,
+                  model_dir, 
+                  val_losses, val_acc, 
+                  train_losses)
 
 finally:
     print("end of training script of ",model_name)
