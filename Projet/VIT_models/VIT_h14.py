@@ -10,7 +10,6 @@ import torchvision.models as models
 import torchvision.transforms as transforms
 from torch.utils.data import DataLoader
 import torch.optim as optim
-from timm import create_model
 
 from torchvision.datasets import CIFAR10, CIFAR100
 from torch.optim.lr_scheduler import CosineAnnealingLR
