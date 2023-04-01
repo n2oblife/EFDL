@@ -80,13 +80,16 @@ try :
     num_samples_subset = 15000
 
     # Model definition
-    model_name = 'vit_h_14'
-    model = models.vit_h14(num_classes=10)
-    state_dict = torch.hub.load_state_dict_from_url(
-        url='https://dl.fbaipublicfiles.com/deit/vit_h14_384-d6e9f3c3.pth',
-        map_location=torch.device('cpu')
-        )
-    model.load_state_dict(state_dict)
+    model_name = 'WRN-28-10'
+   # Load the pre-trained WRN-28-10 model from ImageNet
+    model = models.wide_resnet50_2(pretrained=True)
+    model.fc = nn.Linear(model.fc.in_features, 10)
+
+    # Freeze all the layers except the last one
+    for param in model.parameters():
+        param.requires_grad = False
+    for param in model.fc.parameters():
+        param.requires_grad = True
     model_dir = base_dir+'/models/'+model_name +'_'+ training +'_'+ dataset +'.pt'
    
     print('Beginning of training : '+model_name+' on '+dataset)
