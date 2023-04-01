@@ -82,12 +82,12 @@ try :
 
     # Model definition
     model_name = 'vit_h_14'
-    model = create_model(model_name,
-                         pretrained=True,
-                         num_classes=num_classes,
-                         in_chans=3,
-                         checkpoint_path='./ViT_H_14_Weights.IMAGENET1K_SWAG_E2E_V1.pth.tar'
-                         )
+    model = models.vit_h14(num_classes=10)
+    state_dict = torch.hub.load_state_dict_from_url(
+        url='https://dl.fbaipublicfiles.com/deit/vit_h14_384-d6e9f3c3.pth',
+        map_location=torch.device('cpu')
+        )
+    model.load_state_dict(state_dict)
     model_dir = base_dir+'/models/'+model_name +'_'+ training +'_'+ dataset +'.pt'
    
     print('Beginning of training : '+model_name+' on '+dataset)
