@@ -32,6 +32,7 @@ try :
 
     ## Normalization adapted for CIFAR
     normalize_scratch = transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010))
+    normalize_WRN = transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
 
     # Transforms is a list of transformations applied on the 'raw' dataset before the data is fed to the network. 
     # Here, Data augmentation (RandomCrop and Horizontal Flip) are applied to each batch, differently at each epoch, on the training set data only
@@ -43,11 +44,11 @@ try :
         transforms.RandomRotation(45),
         AddGaussianNoise(0., 0.001),
         transforms.ToTensor(),
-        normalize_scratch])
+        normalize_WRN])
 
     transform_test = transforms.Compose([
         transforms.ToTensor(),
-        normalize_scratch])
+        normalize_WRN])
 
 
     ## Hyperparameters
