@@ -44,11 +44,11 @@ try :
         transforms.RandomRotation(45),
         AddGaussianNoise(0., 0.001),
         transforms.ToTensor(),
-        normalize_WRN])
+        normalize_scratch])
 
     transform_test = transforms.Compose([
         transforms.ToTensor(),
-        normalize_WRN])
+        normalize_scratch])
 
 
     ## Hyperparameters
@@ -91,6 +91,8 @@ try :
         param.requires_grad = False
     for param in model.fc.parameters():
         param.requires_grad = True
+
+    model = model.to(device)
     model_dir = base_dir+'/models/'+model_name +'_'+ training +'_'+ dataset +'.pt'
    
     print('Beginning of training : '+model_name+' on '+dataset)
