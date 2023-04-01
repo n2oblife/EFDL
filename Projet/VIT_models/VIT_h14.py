@@ -44,11 +44,11 @@ try :
         transforms.RandomRotation(45),
         AddGaussianNoise(0., 0.001),
         transforms.ToTensor(),
-        normalize_scratch])
+        normalize_WRN])
 
     transform_test = transforms.Compose([
         transforms.ToTensor(),
-        normalize_scratch])
+        normalize_WRN])
 
 
     ## Hyperparameters
@@ -56,7 +56,7 @@ try :
     num_epochs = 180
     batch_size = 64
     learning_rate = 0.001
-    weight_decay = 10e-4
+    weight_decay = 10e-3
     momentum = 0.9
 
     ## Defining training and dataset
@@ -84,7 +84,7 @@ try :
     model_name = 'WRN-28-10'
    # Load the pre-trained WRN-28-10 model from ImageNet
     model = models.wide_resnet50_2(pretrained=True)
-    model.fc = nn.Linear(model.fc.in_features, 10)
+    model.fc = nn.Linear(model.fc.in_features, num_classes)
 
     # Freeze all the layers except the last one
     for param in model.parameters():
@@ -251,21 +251,12 @@ try :
 
 
 except KeyboardInterrupt:
-    print("\nKeyboard interrupt, we have saved the model and its metrics")
 
-    model_state = {'model name': model_name,
-        'model': model,
-        'optimizer': optimizer,
-        'epoch': num_epochs,
-        'training': training,
-        'dataset': dataset,
-        'metrics' : {'train_loss' : train_losses,
-                                     'val_loss' :val_losses,
-                                     'train_acc' :train_acc,
-                                     'val_acc' : val_acc}
-        }
-    torch.save(model_state, model_dir)
-    print("Modèle sauvegardé dans le chemin : ",model_dir)
+    keybInterrupt(model, model_name, optimizer,
+                    num_epochs, training, dataset,
+                    model_dir, 
+                    val_losses, val_acc, 
+                    train_losses)
 
 finally:
     print("end of training script of ",model_name)
