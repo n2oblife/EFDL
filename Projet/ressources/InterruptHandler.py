@@ -6,7 +6,7 @@ def keybInterrupt(model, model_name, optimizer,
                   model_dir, 
                   val_losses, val_acc, 
                   train_losses, train_acc=None):
-    prompt = input("\nKeyboard interrupt, do you want to the model and its metrics ? \nyes/no")
+    prompt = input("\nKeyboard interrupt, do you want to the model and its metrics ? \nyes/no \n")
     if (prompt=='yes' or prompt=='y' or prompt=='Y'):
         if train_acc == None :
             model_state = {'model name': model_name,
