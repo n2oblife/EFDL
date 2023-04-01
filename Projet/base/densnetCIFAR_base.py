@@ -161,7 +161,7 @@ try :
 
         train_losses.append(running_loss / total)
         train_acc.append(100*correct/total)
-        print('\r'+f'Train Loss : {train_losses[-1]:.4f} , Train accuracy : {train_acc[-1]:.4f}')
+        print('\n'+f'Train Loss : {train_losses[-1]:.4f} , Train accuracy : {train_acc[-1]:.4f}')
 
 
         with torch.no_grad():
