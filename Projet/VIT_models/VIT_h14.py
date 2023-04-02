@@ -87,11 +87,11 @@ try :
     num_ftrs = model.fc.in_features
     model.fc = nn.Linear(num_ftrs, num_classes)
 
-    # # Freeze all the layers except the last one
-    # for param in model.parameters():
-    #     param.requires_grad = False
-    # for param in model.fc.parameters():
-    #     param.requires_grad = True
+    # Freeze all the layers except the last one
+    for param in model.parameters():
+        param.requires_grad = False
+    for param in model.fc.parameters():
+        param.requires_grad = True
 
     model = model.to(device)
     model_dir = base_dir+'/models/'+model_name +'_'+ training +'_'+ dataset +'.pt'
@@ -257,7 +257,7 @@ except KeyboardInterrupt:
                     num_epochs, training, dataset,
                     model_dir, 
                     val_losses, val_acc, 
-                    train_losses)
+                    train_losses, train_acc)
 
 finally:
     print("end of training script of ",model_name)

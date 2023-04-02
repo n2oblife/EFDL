@@ -32,7 +32,7 @@ def keybInterrupt(model, model_name, optimizer,
                             'val_acc' : val_acc}
                 }
         torch.save(model_state, model_dir)
-        print("Modèle sauvegardé dans le chemin : ",model_dir)
+        print("Model saved in the dir : ",model_dir)
     else :
-        print("Modèle non sauvegardé")
+        print("Model not saved")
     return None
