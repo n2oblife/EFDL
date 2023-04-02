@@ -56,7 +56,7 @@ try :
     num_epochs = 200
     batch_size = 128
     learning_rate = 0.001
-    weight_decay = 10e-3
+    weight_decay = 5e-4
     momentum = 0.9
 
     ## Defining training and dataset
@@ -81,9 +81,9 @@ try :
     num_samples_subset = 15000
 
     # Model definition
-    model_name = 'wide_resnet28_10'
-    # Define the wide_resnet28_10 model architecture
-    model = models.wide_resnet28_10(pretrained=True)
+    model_name = 'wide_resnet50_2'
+    # Define the wide_resnet50_2 model architecture
+    model = models.wide_resnet50_2(pretrained=True)
     model.fc = nn.Linear(model.fc.in_features, num_classes)
 
     # # Freeze all the layers except the last one
