@@ -44,17 +44,17 @@ try :
         transforms.RandomRotation(45),
         AddGaussianNoise(0., 0.001),
         transforms.ToTensor(),
-        normalize_WRN])
+        normalize_scratch])
 
     transform_test = transforms.Compose([
         transforms.ToTensor(),
-        normalize_WRN])
+        normalize_scratch])
 
 
     ## Hyperparameters
     num_classes = 10
-    num_epochs = 20
-    batch_size = 64
+    num_epochs = 200
+    batch_size = 128
     learning_rate = 0.001
     weight_decay = 10e-3
     momentum = 0.9
@@ -73,25 +73,24 @@ try :
     c10train = CIFAR10(rootdir,train=True,download=True,transform=transform_train)
     c10test = CIFAR10(rootdir,train=False,download=True,transform=transform_test)
 
-    trainloader = DataLoader(c10train,batch_size=batch_size,shuffle=True)
-    testloader = DataLoader(c10test,batch_size=batch_size) 
+    trainloader = DataLoader(c10train,batch_size=batch_size,shuffle=True, num_workers=2)
+    testloader = DataLoader(c10test,batch_size=batch_size, num_workers=2) 
 
     ## number of target samples for the final dataset
     num_train_examples = len(c10train)
     num_samples_subset = 15000
 
     # Model definition
-    model_name = 'ResNet-50'
-    # Define the ResNet-50 model architecture
-    model = models.resnet50(pretrained=True)
-    num_ftrs = model.fc.in_features
-    model.fc = nn.Linear(num_ftrs, num_classes)
+    model_name = 'wide_resnet28_10'
+    # Define the wide_resnet28_10 model architecture
+    model = models.wide_resnet28_10(pretrained=True)
+    model.fc = nn.Linear(model.fc.in_features, num_classes)
 
-    # Freeze all the layers except the last one
-    for param in model.parameters():
-        param.requires_grad = False
-    for param in model.fc.parameters():
-        param.requires_grad = True
+    # # Freeze all the layers except the last one
+    # for param in model.parameters():
+    #     param.requires_grad = False
+    # for param in model.fc.parameters():
+    #     param.requires_grad = True
 
     model = model.to(device)
     model_dir = base_dir+'/models/'+model_name +'_'+ training +'_'+ dataset +'.pt'
@@ -101,7 +100,7 @@ try :
     # Loss and optimizer
     end_sched = max(int(4*num_epochs/5), 100)
     criterion = nn.CrossEntropyLoss()
-    optimizer = optim.SGD( model.fc.parameters(),
+    optimizer = optim.SGD( model.parameters(),
                             lr=learning_rate,
                             weight_decay = weight_decay, # if no weight decay it means we are regularizing
                             momentum = momentum) 
@@ -111,7 +110,7 @@ try :
    
    
     # Early stopping
-    patience = 50
+    patience = 20
     delta_loss = 0.002
     early_stopper = EarlyStopper(patience, delta_loss)
     stopping_list = []
