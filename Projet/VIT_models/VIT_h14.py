@@ -56,11 +56,11 @@ try :
     num_epochs = 200
     batch_size = 128
     learning_rate = 0.001
-    weight_decay = 5e-4
+    weight_decay = 5e-3
     momentum = 0.9
 
     ## Defining training and dataset
-    training = 'finetunning'
+    training = 'finetunning_last'
     dataset = 'cifar10'
 
     ## Base directory from EFDL to EFDL_storage
@@ -86,11 +86,11 @@ try :
     model = models.wide_resnet50_2(pretrained=True)
     model.fc = nn.Linear(model.fc.in_features, num_classes)
 
-    # # Freeze all the layers except the last one
-    # for param in model.parameters():
-    #     param.requires_grad = False
-    # for param in model.fc.parameters():
-    #     param.requires_grad = True
+    # Freeze all the layers except the last one
+    for param in model.parameters():
+        param.requires_grad = False
+    for param in model.fc.parameters():
+        param.requires_grad = True
 
     model = model.to(device)
     model_dir = base_dir+'/models/'+model_name +'_'+ training +'_'+ dataset +'.pt'
@@ -100,7 +100,7 @@ try :
     # Loss and optimizer
     end_sched = max(int(4*num_epochs/5), 100)
     criterion = nn.CrossEntropyLoss()
-    optimizer = optim.SGD( model.parameters(),
+    optimizer = optim.SGD( model.fc.parameters(),
                             lr=learning_rate,
                             weight_decay = weight_decay, # if no weight decay it means we are regularizing
                             momentum = momentum) 
@@ -155,7 +155,7 @@ try :
             
             # Backward and optimize
             optimizer.zero_grad()
-            #loss.backward()
+            loss.backward()
             optimizer.step()
 
             # For accuracy (up : classic, down : mixup)
