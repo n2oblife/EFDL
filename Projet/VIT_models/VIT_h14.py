@@ -81,9 +81,9 @@ try :
     num_samples_subset = 15000
 
     # Model definition
-    model_name = 'ResNet-56'
-    # Define the ResNet-56 model architecture
-    model = models.resnet56(pretrained=True)
+    model_name = 'ResNet-50'
+    # Define the ResNet-50 model architecture
+    model = models.resnet50(pretrained=True)
     num_ftrs = model.fc.in_features
     model.fc = nn.Linear(num_ftrs, num_classes)
 
