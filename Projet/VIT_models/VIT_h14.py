@@ -53,7 +53,7 @@ try :
 
     ## Hyperparameters
     num_classes = 10
-    num_epochs = 180
+    num_epochs = 20
     batch_size = 64
     learning_rate = 0.001
     weight_decay = 10e-3
@@ -81,16 +81,17 @@ try :
     num_samples_subset = 15000
 
     # Model definition
-    model_name = 'WRN-28-10'
-   # Load the pre-trained WRN-28-10 model from ImageNet
-    model = models.wide_resnet50_2(pretrained=True)
-    model.fc = nn.Linear(model.fc.in_features, num_classes)
+    model_name = 'ResNet-56'
+    # Define the ResNet-56 model architecture
+    model = models.resnet56(pretrained=True)
+    num_ftrs = model.fc.in_features
+    model.fc = nn.Linear(num_ftrs, num_classes)
 
-    # Freeze all the layers except the last one
-    for param in model.parameters():
-        param.requires_grad = False
-    for param in model.fc.parameters():
-        param.requires_grad = True
+    # # Freeze all the layers except the last one
+    # for param in model.parameters():
+    #     param.requires_grad = False
+    # for param in model.fc.parameters():
+    #     param.requires_grad = True
 
     model = model.to(device)
     model_dir = base_dir+'/models/'+model_name +'_'+ training +'_'+ dataset +'.pt'
@@ -110,7 +111,7 @@ try :
    
    
     # Early stopping
-    patience = 3
+    patience = 50
     delta_loss = 0.002
     early_stopper = EarlyStopper(patience, delta_loss)
     stopping_list = []
