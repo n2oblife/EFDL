@@ -100,7 +100,7 @@ try :
     # Loss and optimizer
     end_sched = max(int(4*num_epochs/5), 100)
     criterion = nn.CrossEntropyLoss()
-    optimizer = optim.SGD( model.fc.parameters(),
+    optimizer = optim.SGD( model.parameters(),
                             lr=learning_rate,
                             weight_decay = weight_decay, # if no weight decay it means we are regularizing
                             momentum = momentum) 
