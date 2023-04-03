@@ -60,7 +60,7 @@ try :
     momentum = 0.9
 
     ## Defining training and dataset
-    training = 'finetunning_last'
+    training = 'finetunning_all'
     dataset = 'cifar10'
 
     ## Base directory from EFDL to EFDL_storage
