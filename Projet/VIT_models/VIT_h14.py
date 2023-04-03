@@ -17,6 +17,7 @@ from torch.optim.lr_scheduler import CosineAnnealingLR
 from EarlyStopper import EarlyStopper
 from GaussianNoise import AddGaussianNoise
 from InterruptHandler import keybInterrupt
+import Resnet as rsnt
 
 
 try :
@@ -81,10 +82,12 @@ try :
     num_samples_subset = 15000
 
     # Model definition
-    model_name = 'wide_resnet50_2'
-    # Define the wide_resnet50_2 model architecture
-    model = models.wide_resnet50_2(pretrained=True)
-    model.fc = nn.Linear(model.fc.in_features, num_classes)
+    model_name = 'resnet18'
+    # Define the resnet18 model architecture
+    model = rsnt.ResNet18()
+    checkpoint = torch.load('../ressources/resnet18.ckpt')
+    model.load_state_dict(checkpoint['state_dict'])
+    # model.fc = nn.Linear(model.fc.in_features, num_classes)
 
     # # Freeze all the layers except the last one
     # for param in model.parameters():
