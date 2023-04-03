@@ -86,11 +86,11 @@ try :
     model = models.wide_resnet50_2(pretrained=True)
     model.fc = nn.Linear(model.fc.in_features, num_classes)
 
-    # Freeze all the layers except the last one
-    for param in model.parameters():
-        param.requires_grad = False
-    for param in model.fc.parameters():
-        param.requires_grad = True
+    # # Freeze all the layers except the last one
+    # for param in model.parameters():
+    #     param.requires_grad = False
+    # for param in model.fc.parameters():
+    #     param.requires_grad = True
 
     model = model.to(device)
     model_dir = base_dir+'/models/'+model_name +'_'+ training +'_'+ dataset +'.pt'
