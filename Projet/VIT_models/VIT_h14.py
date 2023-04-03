@@ -86,6 +86,8 @@ try :
     # Define the resnet18 model architecture
     model = rsnt.ResNet18()
     checkpoint = torch.load('/users/local/ZacDL/EFDL/Projet/ressources/resnet18.ckpt')
+    print('checkpoint')
+    print(checkpoint)
     model.load_state_dict(checkpoint['state_dict'])
     # model.fc = nn.Linear(model.fc.in_features, num_classes)
 
