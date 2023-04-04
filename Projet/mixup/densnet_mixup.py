@@ -55,10 +55,10 @@ try :
 
     ## Hyperparameters
     num_classes = 10
-    num_epochs = 120
+    num_epochs = 300
     batch_size = 64
     learning_rate = 0.001
-    weight_decay = 10e-4
+    weight_decay = 5e-3
     momentum = 0.9
 
     ## Defining training and dataset
@@ -102,7 +102,7 @@ try :
    
    
     # Early stopping
-    patience = 3
+    patience = 20
     delta_loss = 0.002
     early_stopper = EarlyStopper(patience, delta_loss)
     stopping_list = []
